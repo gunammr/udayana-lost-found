@@ -26,7 +26,8 @@
 
                 </a>
 
-                <a href="#" class="font-medium text-body hover:text-primary transition">
+                <a href="{{ route('lost-items.create') }}"
+                    class="font-medium transition {{ request()->routeIs('lost-items.create') ? 'text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary' }}">
 
                     Barang Hilang
 
