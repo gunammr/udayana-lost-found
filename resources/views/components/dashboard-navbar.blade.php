@@ -7,7 +7,7 @@
             {{-- 1. BAGIAN KIRI: Logo --}}
             <div class="flex items-center gap-3 shrink-0">
 
-                <img src="{{ asset('images/Udayana_Logo.png') }}" class="w-10 h-10" alt="Logo">
+                <img src="{{ asset('images/Udayana_Logo.png') }}" class="h-12 w-auto object-contain" alt="Logo">
 
                 <h1 class="text-2xl font-bold text-primary">
                     Udayana Lost & Found

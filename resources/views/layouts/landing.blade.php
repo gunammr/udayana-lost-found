@@ -8,6 +8,8 @@
 
     <title>@yield('title', 'Udayana Lost & Found')</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
     <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

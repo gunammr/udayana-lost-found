@@ -60,161 +60,70 @@
 
                 <div class="mt-8 space-y-8">
 
-                    {{-- Item 1 --}}
+                    @forelse (($recentLostItems ?? collect()) as $item)
+                        <div class="flex gap-5">
 
-                    <div class="flex gap-5">
+                            <div class="h-16 w-16 flex-none overflow-hidden rounded-xl bg-blue-100">
 
-                        <div
-                            class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+                                @if ($item->photo_path)
+                                    <img
+                                        src="{{ asset('storage/' . $item->photo_path) }}"
+                                        alt="Foto {{ $item->item_name }}"
+                                        class="h-full w-full object-cover">
+                                @else
+                                    <div class="flex h-full w-full items-center justify-center">
+                                        <img
+                                            src="{{ asset('images/Pencarian.png') }}"
+                                            alt=""
+                                            class="w-7">
+                                    </div>
+                                @endif
 
-                            <img
-                                src="{{ asset('images/Pencarian.png') }}"
-                                class="w-6">
+                            </div>
 
-                        </div>
+                            <div class="min-w-0 flex-1">
 
-                        <div class="flex-1">
+                                <div class="flex gap-4 justify-between">
 
-                            <div class="flex justify-between">
+                                    <div class="min-w-0">
 
-                                <div>
+                                        <h3 class="truncate font-semibold">
 
-                                    <h3 class="font-semibold">
+                                            {{ $item->item_name }}
 
-                                        Dompet Hitam Kulit
+                                        </h3>
 
-                                    </h3>
+                                        <p class="text-body">
 
-                                    <p class="text-body">
+                                            Laporan Kehilangan
 
-                                        Laporan Kehilangan
+                                        </p>
 
-                                    </p>
+                                    </div>
+
+                                    <span class="flex-none text-sm text-gray-400">
+
+                                        {{ $item->created_at?->diffForHumans() }}
+
+                                    </span>
 
                                 </div>
 
-                                <span class="text-gray-400">
+                                <span
+                                    class="inline-block mt-3 px-4 py-1 rounded-full text-sm bg-gray-100">
 
-                                    2 jam lalu
+                                    {{ str($item->status)->replace('_', ' ')->title() }}
 
                                 </span>
 
                             </div>
 
-                            <span
-                                class="inline-block mt-3 px-4 py-1 rounded-full text-sm bg-gray-100">
-
-                                Menunggu Verifikasi
-
-                            </span>
-
                         </div>
-
-                    </div>
-
-                    {{-- Item 2 --}}
-
-                    <div class="flex gap-5">
-
-                        <div
-                            class="w-14 h-14 rounded-full bg-warning flex items-center justify-center">
-
-                            <img
-                                src="{{ asset('images/Ditemukan.png') }}"
-                                class="w-6">
-
+                    @empty
+                        <div class="rounded-xl border border-dashed border-blue-100 bg-blue-50/50 px-5 py-6 text-center text-body">
+                            Belum ada laporan terbaru.
                         </div>
-
-                        <div class="flex-1">
-
-                            <div class="flex justify-between">
-
-                                <div>
-
-                                    <h3 class="font-semibold">
-
-                                        Kunci Motor Honda
-
-                                    </h3>
-
-                                    <p class="text-body">
-
-                                        Klaim Diajukan
-
-                                    </p>
-
-                                </div>
-
-                                <span class="text-gray-400">
-
-                                    Kemarin
-
-                                </span>
-
-                            </div>
-
-                            <span
-                                class="inline-block mt-3 px-4 py-1 rounded-full text-sm bg-yellow-100">
-
-                                Diproses Admin
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    {{-- Item 3 --}}
-
-                    <div class="flex gap-5">
-
-                        <div
-                            class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center">
-
-                            <img
-                                src="{{ asset('images/Berhasil.png') }}"
-                                class="w-6 brightness-0 invert">
-
-                        </div>
-
-                        <div class="flex-1">
-
-                            <div class="flex justify-between">
-
-                                <div>
-
-                                    <h3 class="font-semibold">
-
-                                        KTM Mahasiswa
-
-                                    </h3>
-
-                                    <p class="text-body">
-
-                                        Klaim Selesai
-
-                                    </p>
-
-                                </div>
-
-                                <span class="text-gray-400">
-
-                                    3 Hari lalu
-
-                                </span>
-
-                            </div>
-
-                            <span
-                                class="inline-block mt-3 px-4 py-1 rounded-full text-sm bg-blue-100">
-
-                                Berhasil
-
-                            </span>
-
-                        </div>
-
-                    </div>
+                    @endforelse
 
                 </div>
 

@@ -11,6 +11,9 @@ Route::get('/', [LandingController::class, 'index'])->name('home');
 Route::get('/barang-hilang', [LostItemController::class, 'create'])
     ->name('lost-items.create');
 
+Route::post('/barang-hilang', [LostItemController::class, 'store'])
+    ->name('lost-items.store');
+
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])

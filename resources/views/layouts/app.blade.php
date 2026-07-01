@@ -13,6 +13,8 @@
 
     <title>@yield('title')</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
     <link rel="preconnect"
         href="https://fonts.googleapis.com">
 
