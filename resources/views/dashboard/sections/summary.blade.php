@@ -6,7 +6,7 @@
 
             <x-dashboard-summary-card
                 title="Laporan Hilang"
-                value="3"
+                value="{{ $lostItemsCount ?? 0 }}"
                 subtitle="Sedang diproses"
                 icon="images/search.png"
                 iconBg="bg-red-100"
@@ -14,7 +14,7 @@
 
             <x-dashboard-summary-card
                 title="Laporan Ditemukan"
-                value="1"
+                value="0"
                 subtitle="Menunggu klaim"
                 icon="images/Ditemukan.png"
                 iconBg="bg-warning"
@@ -22,7 +22,7 @@
 
             <x-dashboard-summary-card
                 title="Klaim Berhasil"
-                value="2"
+                value="0"
                 subtitle="Barang telah kembali"
                 icon="images/Berhasil.png"
                 iconBg="bg-blue-100"

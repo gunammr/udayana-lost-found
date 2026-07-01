@@ -7,7 +7,7 @@
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center gap-3">
 
-                <img src="{{ asset('images/Udayana_Logo.png') }}" alt="Logo Universitas Udayana" class="w-10 h-10">
+                <img src="{{ asset('images/Udayana_Logo.png') }}" alt="Logo Universitas Udayana" class="h-12 w-auto object-contain">
 
                 <span class="text-2xl font-bold text-primary">
 
