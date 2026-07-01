@@ -3,9 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [LandingController::class, 'index'])->name('home');
+
+Route::get('/barang-hilang', [LostItemController::class, 'create'])
+    ->name('lost-items.create');
 
 Route::middleware(['auth'])->group(function () {
 

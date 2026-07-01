@@ -22,7 +22,8 @@
                     Beranda
                 </a>
 
-                <a href="#" class="text-body hover:text-primary transition">
+                <a href="{{ route('lost-items.create') }}"
+                    class="{{ request()->routeIs('lost-items.create') ? 'font-semibold text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary transition' }}">
                     Barang Hilang
                 </a>
 
