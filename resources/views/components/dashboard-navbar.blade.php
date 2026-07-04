@@ -1,13 +1,13 @@
 <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
 
-    <div class="max-w-7xl mx-auto px-8">
+    <div class="px-8 mx-auto max-w-7xl">
 
-        <div class="h-20 flex justify-between items-center">
+        <div class="flex items-center justify-between h-20">
 
             {{-- 1. BAGIAN KIRI: Logo --}}
             <div class="flex items-center gap-3 shrink-0">
 
-                <img src="{{ asset('images/Udayana_Logo.png') }}" class="h-12 w-auto object-contain" alt="Logo">
+                <img src="{{ asset('images/Udayana_Logo.png') }}" class="object-contain w-auto h-12" alt="Logo">
 
                 <h1 class="text-2xl font-bold text-primary">
                     Udayana Lost & Found
@@ -16,10 +16,11 @@
             </div>
 
             {{-- 2. BAGIAN TENGAH: Menu Navigasi Utama --}}
-            <div class="hidden md:flex items-center gap-10">
+            <div class="items-center hidden gap-10 md:flex">
 
-                <a href="{{ route('dashboard') }}" class="font-semibold text-primary border-b-2 border-primary pb-1">
-                    Beranda
+                <a href="{{ route('dashboard') }}"
+                 class="{{ request()->routeIs('dashboard') ? 'font-semibold text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary transition pb-1' }}">
+                 Beranda
                 </a>
 
                 <a href="{{ route('lost-items.create') }}"
@@ -27,14 +28,15 @@
                     Barang Hilang
                 </a>
 
-                <a href="#" class="text-body hover:text-primary transition">
+                <a href="#" class="transition text-body hover:text-primary">
                     Barang Ditemukan
                 </a>
 
-                <a href="#" class="text-body hover:text-primary transition">
-                    Klaim Saya
+                <a href="{{ route('claims.index') }}" 
+                 class="{{ request()->routeIs('claims.*') ? 'font-semibold text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary transition pb-1' }}">
+                 Klaim Saya
                 </a>
-
+                
             </div>
 
             {{-- 3. BAGIAN KANAN: Profile Dropdown --}}
@@ -55,7 +57,7 @@
                 </button>
 
                 <div x-show="open" @click.outside="open = false" x-transition
-                    class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border z-50">
+                    class="absolute right-0 z-50 w-56 mt-2 bg-white border shadow-xl rounded-xl">
 
                     <a href="{{ route('profile.edit') }}" class="block px-5 py-3 hover:bg-gray-50">
                         Edit Profil
@@ -63,7 +65,7 @@
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50">
+                        <button type="submit" class="w-full px-5 py-3 text-left text-red-600 hover:bg-red-50">
                             Logout
                         </button>
                     </form>
