@@ -39,9 +39,10 @@
 
                 </a>
 
-                <a href="#" class="font-medium text-body hover:text-primary transition">
+                <a href="{{ route('claims.index') }}"
+                    class="font-medium transition {{ request()->routeIs('claims.*') ? 'text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary' }}">
 
-                    Klaim Saya
+                  Klaim Saya
 
                 </a>
 
