@@ -2,59 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Menampilkan form edit profil kustom.
      */
-    public function edit(Request $request): View
+    public function editCustom(Request $request)
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
+        return view('profile.edit-profil', [
+            'user' => Auth::user(),
         ]);
     }
 
     /**
-     * Update the user's profile information.
+     * Memperbarui data profil kustom ke database.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function updateCustom(Request $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->validate([
+            'name'           => ['required', 'string', 'max:255'],
+            'email'          => ['required', 'email', 'max:255'],
+            'phone'          => ['nullable', 'string', 'max:20'],
+            'nim'            => ['nullable', 'string', 'max:20'],
+            'tahun_angkatan' => ['nullable', 'string', 'max:4'],
+            'program_studi'  => ['nullable', 'string', 'max:100'],
+            'fakultas'       => ['nullable', 'string', 'max:100'],
+            'bio'            => ['nullable', 'string', 'max:500'],
+            'avatar'         => ['nullable', 'image', 'max:2048'],
+        ]);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $data = $request->only([
+            'name', 'email', 'phone', 'nim',
+            'tahun_angkatan', 'program_studi', 'fakultas', 'bio',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+            $data['avatar_path'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        $request->user()->save();
+        $user->update($data);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
-     * Delete the user's account.
+     * Menghapus akun user.
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
+        Auth::user()->delete();
         Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect('/');
     }
 }
