@@ -27,7 +27,8 @@
                     Barang Hilang
                 </a>
 
-                <a href="#" class="text-body hover:text-primary transition">
+                <a href="{{ route('found-items.index') }}"
+                    class="{{ request()->routeIs('found-items.*') ? 'font-semibold text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary transition' }}">
                     Barang Ditemukan
                 </a>
 

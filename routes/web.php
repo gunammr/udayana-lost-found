@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FoundItemController;
 use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\ProfileController;
 
@@ -13,6 +14,12 @@ Route::get('/barang-hilang', [LostItemController::class, 'create'])
 
 Route::post('/barang-hilang', [LostItemController::class, 'store'])
     ->name('lost-items.store');
+
+Route::get('/barang-ditemukan', [FoundItemController::class, 'index'])
+    ->name('found-items.index');
+
+Route::get('/barang-ditemukan/{foundItem}', [FoundItemController::class, 'show'])
+    ->name('found-items.show');
 
 Route::middleware(['auth'])->group(function () {
 
