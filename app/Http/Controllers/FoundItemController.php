@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\FoundItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class FoundItemController extends Controller
 {
@@ -45,5 +47,39 @@ class FoundItemController extends Controller
     public function show(FoundItem $foundItem)
     {
         return view('found-items.show', compact('foundItem'));
+    }
+
+    public function create()
+    {
+        return view('found-items.create', [
+            'categories' => self::CATEGORIES,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'item_name' => ['required', 'string', 'max:120'],
+            'category' => ['required', 'string', Rule::in(self::CATEGORIES)],
+            'incident_date' => ['required', 'date', 'before_or_equal:today'],
+            'location' => ['required', 'string', 'max:180'],
+            'description' => ['required', 'string', 'max:1000'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            'reporter_name' => ['required', 'string', 'max:120'],
+            'phone' => ['required', 'string', 'max:30'],
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo_path'] = $request->file('photo')->store('found-items', 'public');
+        }
+
+        $validated['user_id'] = Auth::id();
+        $validated['status'] = 'ditemukan';
+
+        FoundItem::create($validated);
+
+        return redirect()
+            ->route('found-items.create')
+            ->with('success', 'Laporan barang ditemukan berhasil dikirim dan menunggu verifikasi.');
     }
 }

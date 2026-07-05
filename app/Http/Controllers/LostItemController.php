@@ -17,6 +17,38 @@ class LostItemController extends Controller
         'Lainnya',
     ];
 
+    public function index(Request $request)
+    {
+        $query = LostItem::query()->orderByDesc('created_at');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('item_name', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category') && $request->input('category') !== 'Semua') {
+            $query->where('category', $request->input('category'));
+        }
+
+        $lostItems = $query->paginate(12)->withQueryString();
+
+        return view('lost-items.index', [
+            'lostItems' => $lostItems,
+            'categories' => self::CATEGORIES,
+            'search'     => $request->input('search', ''),
+            'activeCategory' => $request->input('category', 'Semua'),
+        ]);
+    }
+
+    public function show(LostItem $lostItem)
+    {
+        return view('lost-items.show', compact('lostItem'));
+    }
+
     public function create()
     {
         return view('lost-items.create', [

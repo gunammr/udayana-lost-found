@@ -24,12 +24,12 @@
 
                 <div class="flex flex-wrap gap-4 pt-2">
 
-                    <a href="#"
+                    <a href="{{ route('lost-items.create') }}"
                         class="px-7 py-4 bg-primary text-white rounded-xl font-semibold hover:bg-primary-hover transition shadow-md shadow-primary/10 text-base">
                         Laporkan Barang Hilang
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('found-items.create') }}"
                         class="px-7 py-4 border-2 border-primary text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition text-base">
                         Laporkan Barang Ditemukan
                     </a>
@@ -38,7 +38,7 @@
 
                 <div class="pt-2">
 
-                    <a href="#"
+                    <a href="{{ route('found-items.index') }}"
                         class="font-semibold text-primary hover:underline inline-flex items-center gap-2 text-base">
                         Lihat Daftar Barang →
                     </a>

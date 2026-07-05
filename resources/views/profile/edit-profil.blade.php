@@ -6,7 +6,7 @@
 <div class="max-w-3xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
 
     <div class="mb-6">
-        <a href="{{ route('claims.index') }}" class="flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-1 text-sm font-medium text-primary hover:underline">
             ‹ Kembali ke Dashboard
         </a>
     </div>
@@ -152,7 +152,7 @@
 
         {{-- Tombol Aksi --}}
         <div class="flex justify-end gap-4 pt-2">
-            <a href="{{ route('claims.index') }}"
+            <a href="{{ route('dashboard') }}"
                class="px-6 py-3 text-sm font-bold text-gray-700 transition bg-gray-100 rounded-xl hover:bg-gray-200">
                 Batal
             </a>
