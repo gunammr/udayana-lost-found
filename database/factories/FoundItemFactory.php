@@ -9,49 +9,89 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class FoundItemFactory extends Factory
 {
+    private const LOCATIONS = [
+        'Parkiran Rektorat',
+        'Gedung Agrokompleks Lt. 2',
+        'Perpustakaan Pusat Lt. 2',
+        'Kantin Fakultas Teknik',
+        'Halte Bus Dalam Kampus',
+        'Lab Komputer Fakultas MIPA',
+        'Taman Depan Widya Sabha',
+        'Lapangan Basket Kampus',
+        'Gedung Agrobisnis Lt. 1',
+        'Loket Parkir Fakultas Kedokteran',
+        'Masjid Kampus Jimbaran',
+        'Gedung Pasca Sarjana',
+        'Koperasi Mahasiswa',
+        'Gedung Rektorat Lt. 3',
+        'Area Foodcourt Kampus',
+    ];
+
+    private const ITEMS = [
+        ['Dompet Kulit Hitam',    'Aksesori',  'Dompet kulit berwarna hitam berisi kartu identitas dan sejumlah uang tunai. Ditemukan di dekat parkiran rektorat.'],
+        ['Kunci Motor Honda',     'Kunci',     'Satu buah kunci motor Honda dengan gantungan kunci warna merah dan tali putih. Ditemukan di depan Gedung Agrokompleks.'],
+        ['Laptop ASUS Vivobook',  'Elektronik','Laptop ASUS Vivobook warna abu-abu dengan stiker warna-warni di bagian belakang. Ditemukan di perpustakaan lantai 2.'],
+        ['Kartu Mahasiswa Unud',  'Dokumen',   'Kartu Mahasiswa Universitas Udayana atas nama Budi Santoso, Fakultas Teknik angkatan 2022. Ditemukan di kantin Fakultas Teknik.'],
+        ['Earphone TWS Putih',    'Elektronik','Earphone TWS warna putih di dalam casing pengisi daya berwarna transparan. Ditemukan di ruang tunggu Gedung Rektorat.'],
+        ['Tas Ransel Hitam',      'Aksesori',  'Tas ransel merk Eiger warna hitam berisi buku catatan dan alat tulis. Ditemukan di halte bus dalam kampus.'],
+        ['Kacamata Frame Hitam',  'Aksesori',  'Kacamata minus dengan frame hitam tipis, lensa tidak tergores. Ditemukan di meja perpustakaan pusat.'],
+        ['Flashdisk Kingston 32GB','Elektronik','Flashdisk Kingston warna merah kapasitas 32GB. Ditemukan tergeletak di meja lab komputer Fakultas MIPA.'],
+        ['Buku Catatan Biru',     'Dokumen',   'Buku catatan hardcover berwarna biru berisi catatan kuliah mata kuliah Kalkulus. Ditemukan di bangku taman depan Gedung Widya Sabha.'],
+        ['Jam Tangan Casio',      'Aksesori',  'Jam tangan Casio G-Shock warna hitam dengan tali karet hitam. Ditemukan di lapangan basket kampus.'],
+        ['Kunci Gembok Sepeda',   'Kunci',     'Kunci gembok sepeda warna kuning dengan rantai baja. Ditemukan di area parkir sepeda Fakultas Kedokteran.'],
+        ['Powerbank Xiaomi',      'Elektronik','Powerbank Xiaomi 10000mAh warna putih bersih tanpa goresan. Ditemukan di loker Gedung Agrobisnis.'],
+        ['Dompet Warna Coklat',   'Aksesori',  'Dompet tipis warna coklat berisi kartu ATM dan kartu mahasiswa. Ditemukan di foodcourt kampus.'],
+        ['Kunci Mobil Toyota',    'Kunci',     'Remote kunci mobil Toyota dengan logo Toyota. Ditemukan di parkiran Gedung Pascasarjana.'],
+        ['SIM & KTP',             'Dokumen',   'SIM A dan KTP atas nama Ni Made Ayu. Ditemukan di kantin FISIP.'],
+        ['Airpods Generasi 3',    'Elektronik','Airpods Apple generasi 3 di dalam case putih. Ditemukan di bangku taman rektorat.'],
+        ['Headphone Sony',        'Elektronik','Headphone Sony WH-1000XM4 warna hitam. Ditemukan di lab bahasa Gedung Sastra.'],
+        ['Kunci Kamar Kost',      'Kunci',     'Satu buah kunci kamar kost dengan gantungan warna ungu. Ditemukan di dekat pintu gerbang utama.'],
+        ['Buku Panduan Skripsi',  'Dokumen',   'Buku panduan penulisan skripsi Universitas Udayana edisi 2024. Ditemukan di ruang baca perpustakaan.'],
+        ['Charger Laptop Dell',   'Elektronik','Charger laptop Dell 65W warna hitam. Ditemukan di colokan listrik lobi Gedung Agrokompleks.'],
+    ];
+
     public function definition(): array
     {
-        $categories = ['Elektronik', 'Dokumen', 'Aksesori', 'Kunci', 'Lainnya'];
-
-        $items = [
-            ['Dompet Kulit Hitam', 'Aksesori', 'Dompet kulit berwarna hitam berisi kartu identitas dan uang tunai. Ditemukan di dekat parkiran rektorat.'],
-            ['Kunci Motor Honda', 'Kunci', 'Satu buah kunci motor Honda dengan gantungan kunci warna merah. Ditemukan di depan Gedung Agrokompleks.'],
-            ['Laptop ASUS Vivobook', 'Elektronik', 'Laptop ASUS Vivobook warna abu-abu dengan stiker warna-warni di bagian belakang. Ditemukan di perpustakaan lantai 2.'],
-            ['Kartu Mahasiswa Unud', 'Dokumen', 'Kartu Mahasiswa Universitas Udayana atas nama Budi Santoso. Ditemukan di kantin Fakultas Teknik.'],
-            ['Earphone TWS Putih', 'Elektronik', 'Earphone TWS warna putih di dalam casing pengisi daya. Ditemukan di ruang tunggu Gedung Rektorat.'],
-            ['Tas Ransel Hitam', 'Aksesori', 'Tas ransel merk Eiger warna hitam berisi buku dan alat tulis. Ditemukan di halte bus dalam kampus.'],
-            ['Kacamata Frame Hitam', 'Aksesori', 'Kacamata minus dengan frame hitam tipis. Ditemukan di meja perpustakaan pusat.'],
-            ['Flashdisk Kingston 32GB', 'Elektronik', 'Flashdisk Kingston warna merah kapasitas 32GB. Ditemukan di lab komputer Fakultas MIPA.'],
-            ['Buku Catatan Biru', 'Dokumen', 'Buku catatan hardcover berwarna biru berisi catatan kuliah. Ditemukan di bangku taman depan Gedung Widya Sabha.'],
-            ['Jam Tangan Casio', 'Aksesori', 'Jam tangan Casio G-Shock warna hitam. Ditemukan di lapangan basket kampus.'],
-            ['Kunci Gembok Sepeda', 'Kunci', 'Kunci gembok sepeda warna kuning dengan kode. Ditemukan di area parkir sepeda Fakultas Kedokteran.'],
-            ['Powerbank Xiaomi', 'Elektronik', 'Powerbank Xiaomi 10000mAh warna putih. Ditemukan di loker Gedung Agrobisnis.'],
-        ];
-
-        $item = $this->faker->randomElement($items);
-        $photoIndex = $this->faker->numberBetween(1, 100);
+        $item        = $this->faker->randomElement(self::ITEMS);
+        $photoSeed   = $this->faker->numberBetween(10, 200);
 
         return [
             'item_name'     => $item[0],
             'category'      => $item[1],
             'incident_date' => $this->faker->dateTimeBetween('-6 months', 'now'),
-            'location'      => $this->faker->randomElement([
-                'Parkiran Rektorat',
-                'Gedung Agrokompleks Lt. 2',
-                'Perpustakaan Pusat Lt. 2',
-                'Kantin Fakultas Teknik',
-                'Halte Bus Dalam Kampus',
-                'Lab Komputer Fakultas MIPA',
-                'Taman Depan Widya Sabha',
-                'Lapangan Basket Kampus',
-                'Gedung Agrobisnis Lt. 1',
-                'Loket Parkir Fakultas Kedokteran',
-            ]),
+            'location'      => $this->faker->randomElement(self::LOCATIONS),
             'description'   => $item[2],
-            'photo_path'    => "https://picsum.photos/seed/{$photoIndex}/800/600",
-            'reporter_name' => 'Anonim',
+            'photo_path'    => "https://picsum.photos/seed/{$photoSeed}/800/600",
+            'reporter_name' => $this->faker->randomElement([
+                'Anonim', 'Anonim', // lebih sering anonim
+                $this->faker->name(),
+            ]),
             'phone'         => $this->faker->numerify('08##########'),
-            'status'        => 'ditemukan',
+            'status'        => $this->faker->randomElement([
+                'belum_diklaim',
+                'belum_diklaim',
+                'belum_diklaim', // mayoritas belum diklaim
+                'proses_klaim',
+                'sudah_dikembalikan',
+            ]),
         ];
+    }
+
+    /** State: belum diklaim */
+    public function belumDiklaim(): static
+    {
+        return $this->state(fn () => ['status' => 'belum_diklaim']);
+    }
+
+    /** State: proses klaim */
+    public function prosesKlaim(): static
+    {
+        return $this->state(fn () => ['status' => 'proses_klaim']);
+    }
+
+    /** State: sudah dikembalikan */
+    public function sudahDikembalikan(): static
+    {
+        return $this->state(fn () => ['status' => 'sudah_dikembalikan']);
     }
 }

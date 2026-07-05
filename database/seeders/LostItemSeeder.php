@@ -2,26 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\FoundItem;
+use App\Models\LostItem;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class FoundItemSeeder extends Seeder
+class LostItemSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ambil user yang ada atau buat baru
         $users = User::all();
 
-        // Distribusi status realistis
-        FoundItem::factory()->count(15)->belumDiklaim()->create([
+        // Buat 20 laporan barang hilang dengan distribusi status yang realistis
+        LostItem::factory()->count(12)->dicari()->create([
             'user_id' => fn () => $users->random()->id,
         ]);
 
-        FoundItem::factory()->count(4)->prosesKlaim()->create([
+        LostItem::factory()->count(5)->ditemukan()->create([
             'user_id' => fn () => $users->random()->id,
         ]);
 
-        FoundItem::factory()->count(2)->sudahDikembalikan()->create([
+        LostItem::factory()->count(3)->selesai()->create([
             'user_id' => fn () => $users->random()->id,
         ]);
     }

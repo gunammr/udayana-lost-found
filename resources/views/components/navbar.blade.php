@@ -20,14 +20,13 @@
             {{-- Menu --}}
             <div class="hidden lg:flex items-center gap-10">
 
-                <a href="{{ route('home') }}" class="font-medium text-body hover:text-primary transition">
-
+                <a href="{{ route('home') }}"
+                    class="font-medium transition {{ request()->routeIs('home') ? 'text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary' }}">
                     Beranda
-
                 </a>
 
-                <a href="{{ route('lost-items.create') }}"
-                    class="font-medium transition {{ request()->routeIs('lost-items.create') ? 'text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary' }}">
+                <a href="{{ route('lost-items.index') }}"
+                    class="font-medium transition {{ request()->routeIs('lost-items.*') ? 'text-primary border-b-2 border-primary pb-1' : 'text-body hover:text-primary' }}">
 
                     Barang Hilang
 

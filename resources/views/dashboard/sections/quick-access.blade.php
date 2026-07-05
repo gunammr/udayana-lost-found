@@ -18,19 +18,23 @@
 
                     <x-dashboard-action-card
                         title="Cari Barang Hilang"
-                        icon="images/Cari_Biru.png"/>
+                        icon="images/Cari_Biru.png"
+                        href="{{ route('lost-items.index') }}"/>
 
                     <x-dashboard-action-card
                         title="Lapor Barang Ditemukan"
-                        icon="images/Lapor_Biru.png"/>
+                        icon="images/Lapor_Biru.png"
+                        href="{{ route('found-items.create') }}"/>
 
                     <x-dashboard-action-card
                         title="Status Klaim Saya"
-                        icon="images/Status_Biru.png"/>
+                        icon="images/Status_Biru.png"
+                        href="{{ route('claims.index') }}"/>
 
                     <x-dashboard-action-card
                         title="Edit Profil"
-                        icon="images/Profil_Biru.png"/>
+                        icon="images/Profil_Biru.png"
+                        href="{{ route('profile.edit') }}"/>
 
                 </div>
 
