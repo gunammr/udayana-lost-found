@@ -37,6 +37,7 @@ Route::post('/barang-ditemukan', [FoundItemController::class, 'store'])
 Route::get('/barang-ditemukan/{foundItem}', [FoundItemController::class, 'show'])
     ->name('found-items.show');
 
+
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -68,6 +69,9 @@ Route::middleware(['auth'])->group(function () {
         
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
+        ->name('dashboard.admin');
     // Tulis ini di baris paling bawah file routes/web.php Anda
 });
 
