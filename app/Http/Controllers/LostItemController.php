@@ -82,4 +82,49 @@ class LostItemController extends Controller
             ->route('lost-items.create')
             ->with('success', 'Laporan barang hilang berhasil dikirim dan menunggu verifikasi.');
     }
+
+    public function adminIndex()
+    {
+        $lostItems = LostItem::latest()->paginate(10);
+
+        return view('admin.lost-items.index', [
+            'lostItems' => $lostItems,
+        ]);
+    }
+
+    public function edit(LostItem $lostItem)
+    {
+        return view('admin.lost-items.edit', [
+            'lostItem' => $lostItem,
+            'categories' => self::CATEGORIES,
+        ]);
+    }
+
+    public function update(Request $request, LostItem $lostItem)
+    {
+        $validated = $request->validate([
+            'item_name' => 'required|max:120',
+            'category' => ['required', Rule::in(self::CATEGORIES)],
+            'incident_date' => 'required|date',
+            'location' => 'required|max:180',
+            'description' => 'required',
+            'reporter_name' => 'required|max:120',
+            'phone' => 'required|max:30',
+        ]);
+
+        $result = $lostItem->update($validated);
+
+        return redirect()
+            ->route('admin.lost-items.index')
+            ->with('success', 'Data berhasil diperbarui.');
+    }
+
+    public function destroy(LostItem $lostItem)
+    {
+        $lostItem->delete();
+
+        return redirect()
+            ->route('admin.lost-items.index')
+            ->with('success', 'Data berhasil dihapus.');
+    }
 }

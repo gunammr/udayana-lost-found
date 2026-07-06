@@ -48,8 +48,11 @@
 
         </a>
 
-        <a href="#"
-        class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
+        <a href="{{ route('admin.lost-items.index') }}"
+            class="flex items-center gap-4 px-6 py-4 transition
+            {{ request()->routeIs('admin.lost-items.*')
+                ? 'border-l-4 border-blue-700 bg-blue-50 text-blue-700 font-semibold'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-blue-600' }}">
 
             <img
                 src="{{ asset(
@@ -63,8 +66,11 @@
 
         </a>
 
-        <a href="#"
-           class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
+        <a href="{{ route('admin.found-items.index') }}"
+            class="flex items-center gap-4 px-6 py-4 transition
+            {{ request()->routeIs('admin.found-items.*')
+                ? 'border-l-4 border-blue-700 bg-blue-50 text-blue-700 font-semibold'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-blue-600' }}">
 
              <img
                 src="{{ asset(
@@ -78,7 +84,7 @@
 
         </a>
 
-        <a href="#"
+        <a href="{{ route('admin.categories.index') }}"
            class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
 
             <img

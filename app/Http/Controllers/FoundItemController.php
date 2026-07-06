@@ -82,4 +82,51 @@ class FoundItemController extends Controller
             ->route('found-items.create')
             ->with('success', 'Laporan barang ditemukan berhasil dikirim dan menunggu verifikasi.');
     }
+
+    public function adminIndex()
+{
+    $foundItems = FoundItem::latest()->paginate(10);
+
+    return view('admin.found-item.index', compact('foundItems'));
+}
+
+public function edit(FoundItem $foundItem)
+{
+    return view('admin.found-item.edit', [
+        'foundItem' => $foundItem,
+        'categories' => self::CATEGORIES,
+    ]);
+}
+
+public function update(Request $request, FoundItem $foundItem)
+{
+    $validated = $request->validate([
+        'item_name' => 'required|max:120',
+        'category' => ['required', Rule::in(self::CATEGORIES)],
+        'found_date' => 'required|date',
+        'location' => 'required|max:180',
+        'description' => 'required',
+        'finder_name' => 'required|max:120',
+        'phone' => 'required|max:30',
+    ]);
+
+    if ($request->hasFile('photo')) {
+        $validated['photo_path'] = $request->file('photo')->store('found-items', 'public');
+    }
+
+    $result = $foundItem->update($validated);
+
+    return redirect()
+        ->route('admin.found-items.index')
+        ->with('success', 'Data berhasil diperbarui.');
+    }
+
+    public function destroy(FoundItem $foundItem)
+    {
+        $foundItem->delete();
+
+        return redirect()
+            ->route('admin.found-items.index')
+            ->with('success', 'Data berhasil dihapus.');
+    }
 }

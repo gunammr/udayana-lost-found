@@ -7,6 +7,7 @@ use App\Http\Controllers\FoundItemController;
 use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyClaim;
+use App\Http\Controllers\CategoryController;
 
 // Atau jika nama file controllernya adalah MyClaimController:
 // use App\Http\Controllers\MyClaimController;
@@ -36,6 +37,7 @@ Route::post('/barang-ditemukan', [FoundItemController::class, 'store'])
 
 Route::get('/barang-ditemukan/{foundItem}', [FoundItemController::class, 'show'])
     ->name('found-items.show');
+
 
 
 Route::middleware(['auth'])->group(function () {
@@ -72,6 +74,33 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
         ->name('dashboard.admin');
+
+    Route::get('/admin/barang-hilang', [LostItemController::class, 'adminIndex'])
+        ->name('admin.lost-items.index');
+
+    Route::get('/admin/barang-hilang/{lostItem}/edit', [LostItemController::class, 'edit'])
+        ->name('admin.lost-items.edit');
+
+    Route::put('/admin/barang-hilang/{lostItem}', [LostItemController::class, 'update'])
+        ->name('admin.lost-items.update');
+
+    Route::delete('/admin/barang-hilang/{lostItem}', [LostItemController::class, 'destroy'])
+        ->name('admin.lost-items.destroy');
+
+    Route::get('/admin/barang-ditemukan', [FoundItemController::class, 'adminIndex'])
+        ->name('admin.found-items.index');
+
+    Route::get('/admin/barang-ditemukan/{foundItem}/edit', [FoundItemController::class, 'edit'])
+        ->name('admin.found-items.edit');
+
+    Route::put('/admin/barang-ditemukan/{foundItem}', [FoundItemController::class, 'update'])
+        ->name('admin.found-items.update');
+
+    Route::delete('/admin/barang-ditemukan/{foundItem}', [FoundItemController::class, 'destroy'])
+        ->name('admin.found-items.destroy');
+
+    Route::get('/admin/kategori', [CategoryController::class, 'index'])
+        ->name('admin.categories.index');
     // Tulis ini di baris paling bawah file routes/web.php Anda
 });
 
