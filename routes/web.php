@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyClaim;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClaimController;
 
 // Atau jika nama file controllernya adalah MyClaimController:
 // use App\Http\Controllers\MyClaimController;
@@ -63,6 +64,10 @@ Route::middleware(['auth'])->group(function () {
         
     Route::get('/klaim-saya/status', [MyClaim::class, 'status'])
         ->name('claims.status');
+
+    // Ajukan klaim barang ditemukan
+    Route::post('/barang-ditemukan/{foundItem}/klaim', [ClaimController::class, 'store'])
+        ->name('claims.store');
     
     Route::get('/profile', [ProfileController::class, 'editCustom'])
         ->name('profile.edit');
@@ -73,7 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-        
+
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
         ->name('dashboard.admin');
 

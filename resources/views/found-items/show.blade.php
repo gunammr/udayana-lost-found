@@ -4,6 +4,29 @@
 
 @section('content')
 
+    {{-- ================================================
+         FLASH MESSAGES
+    ================================================ --}}
+    @if (session('success'))
+        <div id="flash-success"
+             class="fixed top-6 left-1/2 z-[200] -translate-x-1/2 flex items-center gap-3 rounded-2xl bg-emerald-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl animate-fade-in-down">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {{ session('success') }}
+        </div>
+        <script>setTimeout(()=>{ const el=document.getElementById('flash-success'); if(el) el.remove(); }, 5000);</script>
+    @endif
+
+    @if (session('error'))
+        <div id="flash-error"
+             class="fixed top-6 left-1/2 z-[200] -translate-x-1/2 flex items-center gap-3 rounded-2xl bg-red-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl animate-fade-in-down">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg>
+            {{ session('error') }}
+        </div>
+        <script>setTimeout(()=>{ const el=document.getElementById('flash-error'); if(el) el.remove(); }, 5000);</script>
+    @endif
+
     <section class="relative overflow-hidden bg-background py-10 lg:py-14">
 
         {{-- Decorative blobs --}}
@@ -168,24 +191,47 @@
                     <div class="flex flex-col gap-3 sm:flex-row">
 
                         {{-- Ajukan Klaim --}}
-                        <a href="#"
-                           id="btn-ajukan-klaim"
-                           class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover active:scale-95">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-                            </svg>
-                            Ajukan Klaim
-                        </a>
+                        @auth
+                            <button
+                                id="btn-ajukan-klaim"
+                                onclick="document.getElementById('modal-klaim').classList.remove('hidden')"
+                                class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover active:scale-95 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                                </svg>
+                                Ajukan Klaim
+                            </button>
+                        @else
+                            <a href="{{ route('login') }}"
+                               id="btn-ajukan-klaim"
+                               class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                                </svg>
+                                Masuk untuk Klaim
+                            </a>
+                        @endauth
 
                         {{-- Hubungi Pelapor --}}
-                        <a href="tel:{{ $foundItem->phone }}"
-                           id="btn-hubungi-pelapor"
-                           class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary bg-white px-6 py-3.5 text-sm font-bold text-primary shadow-sm transition hover:bg-soft-blue/30 active:scale-95">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                            Hubungi Pelapor
-                        </a>
+                        @if ($foundItem->phone)
+                            <a href="tel:{{ $foundItem->phone }}"
+                               id="btn-hubungi-pelapor"
+                               class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary bg-white px-6 py-3.5 text-sm font-bold text-primary shadow-sm transition hover:bg-soft-blue/30 active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                {{ $foundItem->phone }}
+                            </a>
+                        @else
+                            <span
+                               id="btn-hubungi-pelapor"
+                               class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white px-6 py-3.5 text-sm font-bold text-gray-400 shadow-sm cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                Kontak Tidak Tersedia
+                            </span>
+                        @endif
 
                     </div>
 
@@ -205,5 +251,115 @@
         </div>
 
     </section>
+
+    {{-- ================================================
+         MODAL: Ajukan Klaim
+    ================================================ --}}
+    @auth
+    <div id="modal-klaim"
+         class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         onclick="if(event.target===this) this.classList.add('hidden')">
+
+        <div class="relative w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden animate-fade-in-down">
+
+            {{-- Header --}}
+            <div class="bg-gradient-to-r from-primary to-primary-hover px-8 py-6 text-white">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h2 class="text-xl font-extrabold">Ajukan Klaim</h2>
+                        <p class="mt-1 text-sm text-white/80">{{ $foundItem->item_name }}</p>
+                    </div>
+                    <button onclick="document.getElementById('modal-klaim').classList.add('hidden')"
+                            class="ml-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Body --}}
+            <form method="POST" action="{{ route('claims.store', $foundItem) }}" class="px-8 py-7">
+                @csrf
+
+                {{-- Info barang ringkas --}}
+                <div class="mb-6 flex items-center gap-4 rounded-2xl border border-blue-100 bg-soft-blue/20 px-5 py-4">
+                    @if ($foundItem->photo_path)
+                        <img src="{{ Str::startsWith($foundItem->photo_path, 'http') ? $foundItem->photo_path : Storage::url($foundItem->photo_path) }}"
+                             alt="{{ $foundItem->item_name }}"
+                             class="h-14 w-14 rounded-xl object-cover shrink-0">
+                    @else
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2 1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-8h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
+                            </svg>
+                        </div>
+                    @endif
+                    <div>
+                        <p class="font-bold text-primary-dark text-sm">{{ $foundItem->item_name }}</p>
+                        <p class="text-xs text-body mt-0.5">{{ $foundItem->location }}</p>
+                        <span class="mt-1 inline-block rounded-full bg-soft-blue/70 px-2.5 py-0.5 text-[10px] font-semibold text-primary">{{ $foundItem->category }}</span>
+                    </div>
+                </div>
+
+                {{-- Textarea pesan --}}
+                <div class="mb-5">
+                    <label for="claim-message" class="mb-2 block text-sm font-bold text-primary-dark">
+                        Bukti Kepemilikan
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <p class="mb-3 text-xs text-body">Jelaskan mengapa barang ini milik kamu – ciri khas, isi tas, nomor seri, atau bukti lain yang dapat memverifikasi kepemilikanmu.</p>
+                    <textarea
+                        id="claim-message"
+                        name="message"
+                        rows="5"
+                        maxlength="1000"
+                        placeholder="Contoh: Kacamata saya memiliki frame hitam tipis dengan lensa anti-gores, bagian dalam frame tertulis 'RX -2.00'. Saya juga memiliki struk pembelian dari Optik Sari Dewata..."
+                        class="w-full resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-primary-dark placeholder:text-gray-300 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+                        oninput="document.getElementById('char-count').textContent=this.value.length"
+                        >{{ old('message') }}</textarea>
+                    @error('message')
+                        <p class="mt-1.5 text-xs text-red-500">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-1.5 text-right text-xs text-body">
+                        <span id="char-count">{{ strlen(old('message', '')) }}</span>/1000
+                    </p>
+                </div>
+
+                {{-- Note --}}
+                <div class="mb-6 flex items-start gap-2.5 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                    </svg>
+                    <p class="text-xs text-amber-700 leading-relaxed">Klaim akan ditinjau oleh admin. Pastikan informasimu akurat – klaim palsu dapat dikenakan sanksi.</p>
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex gap-3">
+                    <button type="button"
+                            onclick="document.getElementById('modal-klaim').classList.add('hidden')"
+                            class="flex-1 rounded-xl border-2 border-gray-200 bg-white px-5 py-3 text-sm font-bold text-body transition hover:border-gray-300 hover:bg-gray-50 active:scale-95">
+                        Batal
+                    </button>
+                    <button type="submit"
+                            class="flex-1 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover active:scale-95">
+                        Kirim Klaim
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    @endauth
+
+    {{-- Auto-buka modal klaim jika ada validation error --}}
+    @if ($errors->has('message'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = document.getElementById('modal-klaim');
+            if (modal) modal.classList.remove('hidden');
+        });
+    </script>
+    @endif
 
 @endsection
