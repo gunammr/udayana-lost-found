@@ -4,16 +4,15 @@
 
 @section('content')
 <div class="px-8 py-12 mx-auto max-w-7xl">
-    ...
 <div class="px-8 py-12 mx-auto max-w-7xl">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
 
         <div class="lg:col-span-1">
             @include('profile.partials.profile_card')
         </div>
 
         <div class="lg:col-span-3">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">Activity History</h1>
+            <h1 class="mb-6 text-3xl font-bold text-gray-800">Activity History</h1>
 
             <div class="flex gap-6 mb-8 text-sm font-medium border-b border-gray-200">
                 <a href="{{ route('claims.index') }}"
@@ -30,23 +29,23 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex flex-wrap gap-6">
                 @forelse ($items as $item)
-                   <div x-data="{ openDetail: false }" class="w-full">
+                   <div x-data="{ openDetail: false }" class="w-full sm:w-[calc(50%-0.75rem)]">
                         
-                        <div class="bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden flex flex-col justify-between hover:shadow-md transition cursor-pointer h-full" 
+                        <div class="flex flex-col justify-between h-full overflow-hidden transition bg-white border border-gray-200 shadow-sm cursor-pointer rounded-2xl hover:shadow-md" 
                              @click="openDetail = true">
                             
-                            <div class="relative h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
-                                <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="w-full h-full object-cover">
-                                <span class="absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                            <div class="relative flex items-center justify-center h-48 overflow-hidden bg-gray-50">
+                                <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="object-cover w-full h-full">
+                                <span class="absolute px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full top-3 right-3">
                                     Finished
                                 </span>
                             </div>
 
-                            <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div class="flex flex-col justify-between flex-1 p-5">
                                 <div>
-                                    <h4 class="text-lg font-bold text-gray-800 mb-2">{{ $item->item_name }}</h4>
+                                    <h4 class="mb-2 text-lg font-bold text-gray-800">{{ $item->item_name }}</h4>
                                     <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($item->description, 90) }}</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
@@ -59,12 +58,12 @@
                         <div x-show="openDetail" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
                             <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-left" @click.outside="openDetail = false">
                                 
-                                <button @click="openDetail = false" class="absolute top-4 left-4 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10 transition">
+                                <button @click="openDetail = false" class="absolute z-10 p-2 transition rounded-full shadow-md top-4 left-4 bg-white/80 hover:bg-white">
                                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
 
-                                <div class="h-64 w-full relative bg-gray-100">
-                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="w-full h-full object-cover">
+                                <div class="relative w-full h-64 bg-gray-100">
+                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="object-cover w-full h-full">
                                     
                                     <span class="absolute top-4 right-4 bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
                                         🕒 Menunggu
@@ -72,10 +71,10 @@
                                 </div>
 
                                 <div class="p-8">
-                                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Klaim: {{ $item->item_name }}</h2>
-                                    <p class="text-gray-500 text-sm mb-6">{{ $item->description }}</p>
+                                    <h2 class="mb-2 text-2xl font-bold text-gray-800">Klaim: {{ $item->item_name }}</h2>
+                                    <p class="mb-6 text-sm text-gray-500">{{ $item->description }}</p>
 
-                                    <div class="grid grid-cols-2 gap-y-6 gap-x-4 bg-gray-50 p-6 rounded-2xl mb-6">
+                                    <div class="grid grid-cols-2 p-6 mb-6 gap-y-6 gap-x-4 bg-gray-50 rounded-2xl">
                                         <div>
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
                                             <p class="text-sm font-bold text-gray-700">Elektronik</p>
@@ -92,35 +91,35 @@
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kontak</p>
                                             <p class="text-sm font-bold text-gray-700">+62 812-3456-7890</p>
                                         </div>
-                                        <div class="col-span-2 border-t pt-4 mt-2">
+                                        <div class="col-span-2 pt-4 mt-2 border-t">
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Status Barang Ditemukan</p>
-                                            <button class="bg-amber-400 text-amber-950 font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-2 mt-1 shadow-sm cursor-default">
+                                            <button class="flex items-center gap-2 px-4 py-2 mt-1 text-xs font-bold shadow-sm cursor-default bg-amber-400 text-amber-950 rounded-xl">
                                                 <span>⚠️ Proses Klaim</span>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <h3 class="font-bold text-gray-800 mb-2 text-sm">Bukti Kepemilikan</h3>
-                                    <p class="text-xs text-gray-500 bg-blue-50/50 p-4 rounded-xl leading-relaxed mb-6">
+                                    <h3 class="mb-2 text-sm font-bold text-gray-800">Bukti Kepemilikan</h3>
+                                    <p class="p-4 mb-6 text-xs leading-relaxed text-gray-500 bg-blue-50/50 rounded-xl">
                                         Memiliki kotak laptop asli, nota pembelian, dan dapat menyebutkan spesifikasi lengkap serta password laptop.
                                     </p>
 
-                                    <h3 class="font-bold text-gray-800 mb-3 text-sm">Informasi Tambahan</h3>
-                                    <div class="space-y-3 text-xs text-gray-600 border-b pb-6 mb-6">
+                                    <h3 class="mb-3 text-sm font-bold text-gray-800">Informasi Tambahan</h3>
+                                    <div class="pb-6 mb-6 space-y-3 text-xs text-gray-600 border-b">
                                         <div class="grid grid-cols-3"><span class="text-gray-400">ID Barang Bermasalah:</span><span class="col-span-2 font-medium">#{{ $item->id }}</span></div>
                                         <div class="grid grid-cols-3"><span class="text-gray-400">Bukti Kepemilikan:</span><span class="col-span-2 font-medium">Kotak laptop + nota pembelian</span></div>
                                         <div class="grid grid-cols-3"><span class="text-gray-400">No. Seri:</span><span class="col-span-2 font-mono text-gray-800">SN-ASUS-2023-0012</span></div>
                                     </div>
 
-                                    <h3 class="font-bold text-gray-800 mb-4 text-sm">Riwayat Status</h3>
+                                    <h3 class="mb-4 text-sm font-bold text-gray-800">Riwayat Status</h3>
                                     <div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
                                         <div class="relative pl-8">
-                                            <div class="absolute left-0 top-1 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-sm"></div>
+                                            <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-1"></div>
                                             <p class="text-sm font-bold text-gray-800">Klaim Diajukan</p>
                                             <p class="text-xs text-gray-400">Pengajuan klaim diterima dan menunggu verifikasi admin</p>
                                         </div>
                                         <div class="relative pl-8">
-                                            <div class="absolute left-0 top-1 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-sm"></div>
+                                            <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-1"></div>
                                             <p class="text-sm font-bold text-gray-800">Sedang Diverifikasi</p>
                                             <p class="text-xs text-gray-400">Admin memeriksa bukti kepemilikan yang diajukan</p>
                                         </div>
@@ -132,7 +131,7 @@
 
                     </div>
                 @empty
-                    <div class="col-span-2 text-center py-12 bg-white rounded-2xl border border-gray-100">
+                    <div class="col-span-2 py-12 text-center bg-white border border-gray-100 rounded-2xl">
                         <p class="text-sm text-gray-400">No approved claims found.</p>
                     </div>
                 @endforelse
