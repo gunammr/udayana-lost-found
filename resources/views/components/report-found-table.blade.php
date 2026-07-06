@@ -14,12 +14,11 @@
 
         </div>
 
-        <button
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-
+        <a
+            href="{{ route('admin.found-items.index') }}"
+            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
             Lihat Semua
-
-        </button>
+        </a>
 
     </div>
 
@@ -68,14 +67,14 @@
 
                         @elseif($item->status == 'proses_klaim')
 
-                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
+                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
                                 Proses Klaim
                             </span>
 
                         @else
 
-                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
-                                Selesai
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
+                                Sudah Dikembalikan
                             </span>
 
                         @endif
