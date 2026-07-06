@@ -38,7 +38,9 @@
                             default     => ['bg-gray-100 text-gray-700',   ucfirst($status)],
                         };
 
-                        $dateStr = \Carbon\Carbon::parse($item->incident_date)->translatedFormat('d M Y');
+                        $createdAt  = \Carbon\Carbon::parse($item->created_at);
+                        $updatedAt  = \Carbon\Carbon::parse($item->updated_at);
+                        $dateStr    = \Carbon\Carbon::parse($item->incident_date)->translatedFormat('d M Y');
                     @endphp
 
                     <div x-data="{ openDetail: false }" class="w-full sm:w-[calc(50%-0.75rem)]">
@@ -99,6 +101,7 @@
                                     </svg>
                                 </button>
 
+                                {{-- Foto --}}
                                 <div class="relative w-full h-64 bg-gray-100">
                                     @if (isset($item->photo_path) && $item->photo_path)
                                         <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}"
@@ -120,52 +123,89 @@
                                     <h2 class="mb-2 text-2xl font-bold text-gray-800">{{ $item->item_name }}</h2>
                                     <p class="mb-6 text-sm leading-relaxed text-gray-500">{{ $item->description }}</p>
 
-                                    <div class="grid grid-cols-2 p-6 mb-6 gap-y-6 gap-x-4 bg-gray-50 rounded-2xl">
-                                        @if (!empty($item->category))
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $item->category }}</p>
+                                    {{-- Info grid dari DB --}}
+                                    <div class="p-6 mb-6 bg-gray-50 rounded-2xl">
+                                        <div class="grid grid-cols-2 gap-y-5 gap-x-4">
+                                            @if (!empty($item->category))
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $item->category }}</p>
+                                            </div>
+                                            @endif
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Tanggal</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $dateStr }}</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Jenis</p>
+                                                <p class="text-sm font-bold text-gray-700">Laporan Barang Hilang</p>
+                                            </div>
+                                            @if (!empty($item->phone))
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kontak</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $item->phone }}</p>
+                                            </div>
+                                            @endif
+                                            @if (!empty($item->location))
+                                            <div class="col-span-2">
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Lokasi</p>
+                                                <p class="flex items-center gap-1 text-sm font-bold text-blue-600">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                                                    </svg>
+                                                    {{ $item->location }}
+                                                </p>
+                                            </div>
+                                            @endif
                                         </div>
-                                        @endif
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Tanggal Kejadian</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $dateStr }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">ID Barang</p>
-                                            <p class="text-sm font-bold text-gray-700">#{{ $item->id }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Status</p>
-                                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusStyle }}">{{ $statusLabel }}</span>
-                                        </div>
-                                        @if (!empty($item->location))
-                                        <div class="col-span-2">
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Lokasi Kejadian</p>
-                                            <p class="flex items-center gap-1 text-sm font-bold text-blue-600">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
-                                                </svg>
-                                                {{ $item->location }}
-                                            </p>
-                                        </div>
-                                        @endif
                                     </div>
 
+                                    {{-- Riwayat Status dengan timestamp --}}
                                     <h3 class="mb-4 text-sm font-bold text-gray-800">Riwayat Status</h3>
-                                    <div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
+                                    <div class="space-y-5 relative before:absolute before:left-[7px] before:top-4 before:bottom-4 before:w-0.5 before:bg-gray-100">
+
+                                        {{-- 1. Laporan Dibuat - selalu aktif --}}
                                         <div class="relative pl-8">
-                                            <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-1"></div>
-                                            <p class="text-sm font-bold text-gray-800">Laporan Diajukan</p>
-                                            <p class="text-xs text-gray-400">Sistem berhasil mencatat laporan kehilangan Anda</p>
+                                            <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-0.5"></div>
+                                            <p class="text-sm font-bold text-gray-800">Laporan Dibuat</p>
+                                            <p class="text-xs text-gray-400">Laporan kehilangan diterima dan dicatat</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">{{ $createdAt->translatedFormat('d M Y, H:i') }}</p>
                                         </div>
+
+                                        {{-- 2. Dicari - aktif jika status bukan 'dicari' atau sudah update --}}
+                                        @php $step2Active = in_array($status, ['dicari', 'ditemukan', 'selesai']); @endphp
                                         <div class="relative pl-8">
-                                            <div class="absolute left-0 top-1 w-4 h-4 {{ $status !== 'dicari' ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
-                                            <p class="text-sm font-bold {{ $status !== 'dicari' ? 'text-gray-800' : 'text-gray-300' }}">
-                                                {{ $status === 'ditemukan' ? 'Barang Ditemukan' : ($status === 'selesai' ? 'Selesai / Diklaim' : 'Sedang Dicari') }}
+                                            <div class="absolute left-0 top-0.5 w-4 h-4 {{ $step2Active ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                            <p class="text-sm font-bold {{ $step2Active ? 'text-gray-800' : 'text-gray-300' }}">Dicari</p>
+                                            <p class="text-xs {{ $step2Active ? 'text-gray-400' : 'text-gray-300' }}">Petugas sedang mencari di area yang dilaporkan</p>
+                                            <p class="text-xs {{ $step2Active ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">
+                                                {{ $step2Active && !empty($item->dicari_at) ? \Carbon\Carbon::parse($item->dicari_at)->translatedFormat('d M Y, H:i') : '—' }}
                                             </p>
                                         </div>
+
+                                        {{-- 3. Ditemukan --}}
+                                        @php $step3Active = in_array($status, ['ditemukan', 'selesai']); @endphp
+                                        <div class="relative pl-8">
+                                            <div class="absolute left-0 top-0.5 w-4 h-4 {{ $step3Active ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                            <p class="text-sm font-bold {{ $step3Active ? 'text-gray-800' : 'text-gray-300' }}">Ditemukan</p>
+                                            <p class="text-xs {{ $step3Active ? 'text-gray-400' : 'text-gray-300' }}">Barang ditemukan dan dapat diambil</p>
+                                            <p class="text-xs {{ $step3Active ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">
+                                                {{ $step3Active && !empty($item->ditemukan_at) ? \Carbon\Carbon::parse($item->ditemukan_at)->translatedFormat('d M Y, H:i') : '—' }}
+                                            </p>
+                                        </div>
+
+                                        {{-- 4. Selesai --}}
+                                        @php $step4Active = $status === 'selesai'; @endphp
+                                        <div class="relative pl-8">
+                                            <div class="absolute left-0 top-0.5 w-4 h-4 {{ $step4Active ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                            <p class="text-sm font-bold {{ $step4Active ? 'text-gray-800' : 'text-gray-300' }}">Selesai</p>
+                                            <p class="text-xs {{ $step4Active ? 'text-gray-400' : 'text-gray-300' }}">Barang berhasil dikembalikan ke pemilik</p>
+                                            <p class="text-xs {{ $step4Active ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">
+                                                {{ $step4Active && !empty($item->selesai_at) ? \Carbon\Carbon::parse($item->selesai_at)->translatedFormat('d M Y, H:i') : '—' }}
+                                            </p>
+                                        </div>
+
                                     </div>
                                 </div>
 

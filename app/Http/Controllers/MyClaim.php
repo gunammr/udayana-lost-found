@@ -8,10 +8,6 @@ use App\Models\Claim;
 
 class MyClaim extends Controller
 {
-    /**
-     * Semua laporan barang hilang milik user yang login,
-     * plus semua klaim yang mereka ajukan (pada barang ditemukan).
-     */
     private function allItemsForUser()
     {
         // Laporan barang hilang yang dibuat user ini
@@ -19,7 +15,13 @@ class MyClaim extends Controller
             ->latest()
             ->get()
             ->map(fn ($item) => (object) array_merge($item->toArray(), [
-                'item_type' => 'lost',
+                'item_type'    => 'lost',
+                'created_at'   => $item->created_at,
+                'updated_at'   => $item->updated_at,
+                'dicari_at'    => $item->dicari_at,
+                'ditemukan_at' => $item->ditemukan_at,
+                'selesai_at'   => $item->selesai_at,
+                // phone sudah ada di LostItem (reporter_name & phone kolom)
             ]));
 
         // Klaim barang ditemukan yang diajukan user ini
@@ -28,16 +30,24 @@ class MyClaim extends Controller
             ->latest()
             ->get()
             ->map(fn ($claim) => (object) [
-                'id'            => $claim->id,
-                'item_name'     => $claim->foundItem?->item_name ?? '-',
-                'description'   => $claim->message,
-                'status'        => $claim->status,   // menunggu | diterima | ditolak
-                'photo_path'    => $claim->foundItem?->photo_path,
-                'incident_date' => $claim->foundItem?->incident_date ?? $claim->created_at,
-                'category'      => $claim->foundItem?->category ?? '-',
-                'location'      => $claim->foundItem?->location ?? '-',
-                'item_type'     => 'claim',
-                'found_item_id' => $claim->found_item_id,
+                'id'                => $claim->id,
+                'item_name'         => $claim->foundItem?->item_name ?? '-',
+                // description barang (dari found item), bukan pesan klaim
+                'item_description'  => $claim->foundItem?->description ?? '-',
+                // pesan/bukti kepemilikan dari pengklaim
+                'claim_message'     => $claim->message,
+                'description'       => $claim->message,   // fallback untuk card ringkas
+                'status'            => $claim->status,
+                'photo_path'        => $claim->foundItem?->photo_path,
+                'incident_date'     => $claim->foundItem?->incident_date ?? $claim->created_at,
+                'category'          => $claim->foundItem?->category ?? '-',
+                'location'          => $claim->foundItem?->location ?? '-',
+                // Kontak = nomor HP pelapor barang ditemukan
+                'phone'             => $claim->foundItem?->phone ?? null,
+                'found_item_id'     => $claim->found_item_id,
+                'item_type'         => 'claim',
+                'created_at'        => $claim->created_at,
+                'updated_at'        => $claim->updated_at,
             ]);
 
         return $lostItems->concat($claims)->sortByDesc('incident_date')->values();
@@ -56,8 +66,8 @@ class MyClaim extends Controller
 
     public function laporan()
     {
-        $allItems  = $this->allItemsForUser();
-        $laporan   = $allItems->where('item_type', 'lost')->values();
+        $allItems = $this->allItemsForUser();
+        $laporan  = $allItems->where('item_type', 'lost')->values();
 
         return view('myclaim.laporan', [
             'items'        => $laporan,

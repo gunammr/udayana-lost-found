@@ -33,7 +33,6 @@
                         $isLost  = ($item->item_type ?? 'lost') === 'lost';
                         $status  = $item->status ?? 'dicari';
 
-                        // Label & warna badge
                         if ($isLost) {
                             [$statusStyle, $statusLabel] = match($status) {
                                 'dicari'    => ['bg-red-100 text-red-700',    'Dicari'],
@@ -50,12 +49,15 @@
                             };
                         }
 
-                        $dateObj = $item->incident_date;
-                        $dateStr = is_string($dateObj)
-                            ? \Carbon\Carbon::parse($dateObj)->translatedFormat('d M Y')
-                            : \Carbon\Carbon::instance($dateObj)->translatedFormat('d M Y');
+                        $createdAt       = \Carbon\Carbon::parse($item->created_at);
+                        $updatedAt       = \Carbon\Carbon::parse($item->updated_at);
+                        $dateStr         = \Carbon\Carbon::parse($item->incident_date)->translatedFormat('d M Y');
+                        $itemDescription = $item->item_description ?? $item->description ?? '-';
+                        $claimMessage    = $item->claim_message ?? $item->description ?? '-';
+                        $cardSummary     = $isLost ? ($item->description ?? '-') : $claimMessage;
                     @endphp
 
+                    {{-- ===== CARD ===== --}}
                     <div x-data="{ openDetail: false }" class="w-full sm:w-[calc(50%-0.75rem)]">
 
                         <div class="flex flex-col justify-between h-full overflow-hidden transition bg-white border border-gray-200 shadow-sm cursor-pointer rounded-2xl hover:shadow-md"
@@ -63,7 +65,7 @@
 
                             {{-- Thumbnail --}}
                             <div class="relative flex items-center justify-center h-48 overflow-hidden bg-gray-50">
-                                @if (isset($item->photo_path) && $item->photo_path)
+                                @if (!empty($item->photo_path))
                                     <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}"
                                          class="object-cover w-full h-full">
                                 @else
@@ -86,7 +88,7 @@
                                         {{ $isLost ? 'Laporan Kehilangan' : 'Pengajuan Klaim' }}
                                     </p>
                                     <h4 class="mb-2 text-lg font-bold text-gray-800">{{ $item->item_name }}</h4>
-                                    <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($item->description, 90) }}</p>
+                                    <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($cardSummary, 90) }}</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
                                     <span class="flex items-center gap-1">
@@ -100,7 +102,7 @@
                             </div>
                         </div>
 
-                        {{-- Modal detail --}}
+                        {{-- ===== MODAL ===== --}}
                         <div x-show="openDetail"
                              class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
                              x-transition:enter="transition ease-out duration-200"
@@ -120,7 +122,7 @@
 
                                 {{-- Foto besar --}}
                                 <div class="relative w-full h-64 bg-gray-100">
-                                    @if (isset($item->photo_path) && $item->photo_path)
+                                    @if (!empty($item->photo_path))
                                         <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}"
                                              class="object-cover w-full h-full">
                                     @else
@@ -135,72 +137,129 @@
                                     </span>
                                 </div>
 
+                                {{-- Konten modal --}}
                                 <div class="p-8">
+
                                     <p class="mb-1 text-xs font-semibold uppercase tracking-wider {{ $isLost ? 'text-red-400' : 'text-blue-400' }}">
                                         {{ $isLost ? 'Laporan Kehilangan' : 'Pengajuan Klaim' }}
                                     </p>
                                     <h2 class="mb-2 text-2xl font-bold text-gray-800">{{ $item->item_name }}</h2>
-                                    <p class="mb-6 text-sm text-gray-500 leading-relaxed">{{ $item->description }}</p>
 
-                                    {{-- Info grid dari DB --}}
-                                    <div class="grid grid-cols-2 p-6 mb-6 gap-y-6 gap-x-4 bg-gray-50 rounded-2xl">
-                                        @if (!empty($item->category))
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $item->category }}</p>
+                                    {{-- Deskripsi: barang untuk lost, deskripsi foundItem untuk claim --}}
+                                    <p class="mb-6 text-sm text-gray-500 leading-relaxed">
+                                        {{ $isLost ? ($item->description ?? '-') : $itemDescription }}
+                                    </p>
+
+                                    {{-- Info grid --}}
+                                    <div class="p-6 mb-6 bg-gray-50 rounded-2xl">
+                                        <div class="grid grid-cols-2 gap-y-5 gap-x-4">
+                                            @if (!empty($item->category))
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $item->category }}</p>
+                                            </div>
+                                            @endif
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Tanggal</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $dateStr }}</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Jenis</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $isLost ? 'Laporan Barang Hilang' : 'Klaim Barang Ditemukan' }}</p>
+                                            </div>
+                                            @if (!empty($item->phone))
+                                            <div>
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kontak</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $item->phone }}</p>
+                                            </div>
+                                            @endif
+                                            @if (!empty($item->location))
+                                            <div class="col-span-2">
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Lokasi</p>
+                                                <p class="flex items-center gap-1 text-sm font-bold text-blue-600">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                                                    </svg>
+                                                    {{ $item->location }}
+                                                </p>
+                                            </div>
+                                            @endif
+                                            @if (!$isLost)
+                                            <div class="col-span-2 pt-1">
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-2">Bukti Kepemilikan</p>
+                                                <p class="text-sm text-gray-600 leading-relaxed">{{ $claimMessage }}</p>
+                                            </div>
+                                            @endif
                                         </div>
-                                        @endif
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Tanggal</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $dateStr }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Jenis</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $isLost ? 'Laporan Barang Hilang' : 'Klaim Barang Ditemukan' }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">ID</p>
-                                            <p class="text-sm font-bold text-gray-700">#{{ $item->id }}</p>
-                                        </div>
-                                        @if (!empty($item->location))
-                                        <div class="col-span-2">
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Lokasi</p>
-                                            <p class="flex items-center gap-1 text-sm font-bold text-blue-600">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
-                                                </svg>
-                                                {{ $item->location }}
-                                            </p>
-                                        </div>
-                                        @endif
                                     </div>
 
                                     {{-- Riwayat Status --}}
                                     <h3 class="mb-4 text-sm font-bold text-gray-800">Riwayat Status</h3>
-                                    <div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
-                                        <div class="relative pl-8">
-                                            <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-1"></div>
-                                            <p class="text-sm font-bold text-gray-800">{{ $isLost ? 'Laporan Diajukan' : 'Klaim Diajukan' }}</p>
-                                            <p class="text-xs text-gray-400">Sistem berhasil mencatat aktivitas Anda</p>
-                                        </div>
-                                        <div class="relative pl-8">
-                                            <div class="absolute left-0 top-1 w-4 h-4 {{ $status !== 'dicari' && $status !== 'menunggu' ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
-                                            <p class="text-sm font-bold {{ $status !== 'dicari' && $status !== 'menunggu' ? 'text-gray-800' : 'text-gray-300' }}">
-                                                @if ($isLost)
-                                                    Sedang Dicari / Diverifikasi
-                                                @else
-                                                    {{ $status === 'diterima' ? 'Klaim Diterima ✓' : ($status === 'ditolak' ? 'Klaim Ditolak ✗' : 'Menunggu Verifikasi Admin') }}
-                                                @endif
-                                            </p>
-                                        </div>
+                                    <div class="space-y-5 relative before:absolute before:left-[7px] before:top-4 before:bottom-4 before:w-0.5 before:bg-gray-100">
+
+                                        @if ($isLost)
+                                            <div class="relative pl-8">
+                                                <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-0.5"></div>
+                                                <p class="text-sm font-bold text-gray-800">Laporan Dibuat</p>
+                                                <p class="text-xs text-gray-400">Laporan kehilangan diterima dan dicatat</p>
+                                                <p class="text-xs text-gray-400 mt-0.5">{{ $createdAt->translatedFormat('d M Y, H:i') }}</p>
+                                            </div>
+                                            @php $s2 = in_array($status, ['dicari','ditemukan','selesai']); @endphp
+                                            <div class="relative pl-8">
+                                                <div class="absolute left-0 top-0.5 w-4 h-4 {{ $s2 ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                                <p class="text-sm font-bold {{ $s2 ? 'text-gray-800' : 'text-gray-300' }}">Dicari</p>
+                                                <p class="text-xs {{ $s2 ? 'text-gray-400' : 'text-gray-300' }}">Petugas sedang mencari di area yang dilaporkan</p>
+                                                <p class="text-xs {{ $s2 ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">{{ $s2 && !empty($item->dicari_at) ? \Carbon\Carbon::parse($item->dicari_at)->translatedFormat('d M Y, H:i') : '—' }}</p>
+                                            </div>
+                                            @php $s3 = in_array($status, ['ditemukan','selesai']); @endphp
+                                            <div class="relative pl-8">
+                                                <div class="absolute left-0 top-0.5 w-4 h-4 {{ $s3 ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                                <p class="text-sm font-bold {{ $s3 ? 'text-gray-800' : 'text-gray-300' }}">Ditemukan</p>
+                                                <p class="text-xs {{ $s3 ? 'text-gray-400' : 'text-gray-300' }}">Barang ditemukan dan dapat diambil</p>
+                                                <p class="text-xs {{ $s3 ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">{{ $s3 && !empty($item->ditemukan_at) ? \Carbon\Carbon::parse($item->ditemukan_at)->translatedFormat('d M Y, H:i') : '—' }}</p>
+                                            </div>
+                                            @php $s4 = $status === 'selesai'; @endphp
+                                            <div class="relative pl-8">
+                                                <div class="absolute left-0 top-0.5 w-4 h-4 {{ $s4 ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                                <p class="text-sm font-bold {{ $s4 ? 'text-gray-800' : 'text-gray-300' }}">Selesai</p>
+                                                <p class="text-xs {{ $s4 ? 'text-gray-400' : 'text-gray-300' }}">Barang berhasil dikembalikan ke pemilik</p>
+                                                <p class="text-xs {{ $s4 ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">{{ $s4 && !empty($item->selesai_at) ? \Carbon\Carbon::parse($item->selesai_at)->translatedFormat('d M Y, H:i') : '—' }}</p>
+                                            </div>
+                                        @else
+                                            <div class="relative pl-8">
+                                                <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-0.5"></div>
+                                                <p class="text-sm font-bold text-gray-800">Klaim Diajukan</p>
+                                                <p class="text-xs text-gray-400">Pengajuan klaim diterima dan menunggu verifikasi admin</p>
+                                                <p class="text-xs text-gray-400 mt-0.5">{{ $createdAt->translatedFormat('d M Y, H:i') }}</p>
+                                            </div>
+                                            @php $sk2 = in_array($status, ['diterima','ditolak']); @endphp
+                                            <div class="relative pl-8">
+                                                <div class="absolute left-0 top-0.5 w-4 h-4 {{ $sk2 ? ($status === 'ditolak' ? 'bg-red-500' : 'bg-blue-600') : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                                <p class="text-sm font-bold {{ $sk2 ? 'text-gray-800' : 'text-gray-300' }}">
+                                                    @if ($status === 'diterima') Klaim Diterima ✓
+                                                    @elseif($status === 'ditolak') Klaim Ditolak ✗
+                                                    @else Menunggu Verifikasi Admin
+                                                    @endif
+                                                </p>
+                                                <p class="text-xs {{ $sk2 ? 'text-gray-400' : 'text-gray-300' }}">Admin memeriksa bukti kepemilikan yang diajukan</p>
+                                                <p class="text-xs {{ $sk2 ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">{{ $sk2 ? $updatedAt->translatedFormat('d M Y, H:i') : '—' }}</p>
+                                            </div>
+                                        @endif
+
                                     </div>
                                 </div>
+                                {{-- end konten modal --}}
 
                             </div>
+                            {{-- end modal box --}}
+
                         </div>
+                        {{-- end modal overlay --}}
 
                     </div>
+                    {{-- end card wrapper --}}
+
                 @empty
                     <div class="w-full py-12 text-center bg-white border border-gray-100 rounded-2xl">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-3 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -210,8 +269,13 @@
                     </div>
                 @endforelse
             </div>
+            {{-- end flex grid --}}
 
         </div>
+        {{-- end col-span-3 --}}
+
     </div>
+    {{-- end grid --}}
+
 </div>
 @endsection
