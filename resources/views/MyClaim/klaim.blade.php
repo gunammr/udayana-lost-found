@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="px-8 py-12 mx-auto max-w-7xl">
-<div class="px-8 py-12 mx-auto max-w-7xl">
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
 
         <div class="lg:col-span-1">
