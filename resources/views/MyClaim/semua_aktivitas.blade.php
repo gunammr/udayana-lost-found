@@ -10,53 +10,68 @@
         </div>
 
         <div class="lg:col-span-3">
-            <h1 class="mb-6 text-3xl font-bold text-gray-800">Activity History</h1>
+            <h1 class="mb-6 text-3xl font-bold text-gray-800">Riwayat Aktivitas</h1>
 
             <div class="flex gap-6 mb-8 text-sm font-medium border-b border-gray-200">
                 <a href="{{ route('claims.index') }}"
                     class="{{ request()->routeIs('claims.index') ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-3' : 'text-gray-500 pb-3' }}">
-                    All Activities
+                    Semua Aktivitas
                 </a>
                 <a href="{{ route('claims.laporan') }}"
                     class="{{ request()->routeIs('claims.laporan') ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-3' : 'text-gray-500 pb-3' }}">
-                    Loss Reports
+                    Laporan Kehilangan
                 </a>
                 <a href="{{ route('claims.status') }}"
                     class="{{ request()->routeIs('claims.status') ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-3' : 'text-gray-500 pb-3' }}">
-                    Claim Status
+                    Status Klaim
                 </a>
             </div>
 
             <div class="flex flex-wrap gap-6">
                 @forelse ($items as $item)
                     @php
-                        $status = $item->status ?? 'dicari';
-                        $statusStyle = match($status) {
-                            'dicari' => 'bg-red-100 text-red-800',
-                            'ditemukan' => 'bg-blue-100 text-blue-800',
-                            'selesai' => 'bg-green-100 text-green-800',
-                            default => 'bg-gray-100 text-gray-800',
-                        };
-                        
-                        $statusLabel = match($status) {
-                            'dicari' => 'Wanted',
-                            'ditemukan' => 'Found',
-                            'selesai' => 'Finished',
-                            default => ucfirst($status),
-                        };
+                        $isLost  = ($item->item_type ?? 'lost') === 'lost';
+                        $status  = $item->status ?? 'dicari';
+
+                        // Label & warna badge
+                        if ($isLost) {
+                            [$statusStyle, $statusLabel] = match($status) {
+                                'dicari'    => ['bg-red-100 text-red-700',    'Dicari'],
+                                'ditemukan' => ['bg-blue-100 text-blue-700',  'Ditemukan'],
+                                'selesai'   => ['bg-green-100 text-green-700','Selesai'],
+                                default     => ['bg-gray-100 text-gray-700',  ucfirst($status)],
+                            };
+                        } else {
+                            [$statusStyle, $statusLabel] = match($status) {
+                                'menunggu' => ['bg-amber-100 text-amber-700', 'Menunggu'],
+                                'diterima' => ['bg-green-100 text-green-700', 'Diterima'],
+                                'ditolak'  => ['bg-red-100 text-red-700',    'Ditolak'],
+                                default    => ['bg-gray-100 text-gray-700',   ucfirst($status)],
+                            };
+                        }
+
+                        $dateObj = $item->incident_date;
+                        $dateStr = is_string($dateObj)
+                            ? \Carbon\Carbon::parse($dateObj)->translatedFormat('d M Y')
+                            : \Carbon\Carbon::instance($dateObj)->translatedFormat('d M Y');
                     @endphp
 
                     <div x-data="{ openDetail: false }" class="w-full sm:w-[calc(50%-0.75rem)]">
-                        
-                        <div class="flex flex-col justify-between h-full overflow-hidden transition bg-white border border-gray-200 shadow-sm cursor-pointer rounded-2xl hover:shadow-md" 
+
+                        <div class="flex flex-col justify-between h-full overflow-hidden transition bg-white border border-gray-200 shadow-sm cursor-pointer rounded-2xl hover:shadow-md"
                              @click="openDetail = true">
-                            
+
+                            {{-- Thumbnail --}}
                             <div class="relative flex items-center justify-center h-48 overflow-hidden bg-gray-50">
                                 @if (isset($item->photo_path) && $item->photo_path)
-                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="object-cover w-full h-full">
+                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}"
+                                         class="object-cover w-full h-full">
                                 @else
-                                    <div class="p-6 text-center text-gray-300">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    <div class="flex flex-col items-center text-gray-300 gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                        </svg>
+                                        <span class="text-xs">Tidak ada foto</span>
                                     </div>
                                 @endif
                                 <span class="absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full {{ $statusStyle }}">
@@ -64,67 +79,120 @@
                                 </span>
                             </div>
 
+                            {{-- Card body --}}
                             <div class="flex flex-col justify-between flex-1 p-5">
                                 <div>
+                                    <p class="mb-1 text-[10px] font-semibold uppercase tracking-wider {{ $isLost ? 'text-red-400' : 'text-blue-400' }}">
+                                        {{ $isLost ? 'Laporan Kehilangan' : 'Pengajuan Klaim' }}
+                                    </p>
                                     <h4 class="mb-2 text-lg font-bold text-gray-800">{{ $item->item_name }}</h4>
                                     <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($item->description, 90) }}</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
-                                    <span>📅 {{ is_string($item->incident_date) ? date('d M Y', strtotime($item->incident_date)) : $item->incident_date->format('d M Y') }}</span>
-                                    <button class="font-bold text-blue-600 hover:underline">Details →</button>
+                                    <span class="flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                                        </svg>
+                                        {{ $dateStr }}
+                                    </span>
+                                    <button class="font-bold text-blue-600 hover:underline">Detail →</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div x-show="openDetail" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
-                            <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-left" @click.outside="openDetail = false">
-                                
-                                <button @click="openDetail = false" class="absolute z-10 p-2 transition rounded-full shadow-md top-4 left-4 bg-white/80 hover:bg-white">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        {{-- Modal detail --}}
+                        <div x-show="openDetail"
+                             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-cloak>
+
+                            <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-left"
+                                 @click.outside="openDetail = false">
+
+                                <button @click="openDetail = false"
+                                        class="absolute z-10 p-2 transition rounded-full shadow-md top-4 left-4 bg-white/80 hover:bg-white">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
                                 </button>
 
+                                {{-- Foto besar --}}
                                 <div class="relative w-full h-64 bg-gray-100">
-                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="object-cover w-full h-full">
+                                    @if (isset($item->photo_path) && $item->photo_path)
+                                        <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}"
+                                             class="object-cover w-full h-full">
+                                    @else
+                                        <div class="flex flex-col items-center justify-center w-full h-full text-gray-300 gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                            </svg>
+                                        </div>
+                                    @endif
                                     <span class="absolute top-4 right-4 {{ $statusStyle }} px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
                                         {{ $statusLabel }}
                                     </span>
                                 </div>
 
                                 <div class="p-8">
-                                    <h2 class="mb-2 text-2xl font-bold text-gray-800">
-                                        {{ $item->status == 'selesai' ? 'Klaim:' : 'Laporan:' }} {{ $item->item_name }}
-                                    </h2>
-                                    <p class="mb-6 text-sm text-gray-500">{{ $item->description }}</p>
+                                    <p class="mb-1 text-xs font-semibold uppercase tracking-wider {{ $isLost ? 'text-red-400' : 'text-blue-400' }}">
+                                        {{ $isLost ? 'Laporan Kehilangan' : 'Pengajuan Klaim' }}
+                                    </p>
+                                    <h2 class="mb-2 text-2xl font-bold text-gray-800">{{ $item->item_name }}</h2>
+                                    <p class="mb-6 text-sm text-gray-500 leading-relaxed">{{ $item->description }}</p>
 
+                                    {{-- Info grid dari DB --}}
                                     <div class="grid grid-cols-2 p-6 mb-6 gap-y-6 gap-x-4 bg-gray-50 rounded-2xl">
+                                        @if (!empty($item->category))
                                         <div>
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
-                                            <p class="text-sm font-bold text-gray-700">Elektronik</p>
+                                            <p class="text-sm font-bold text-gray-700">{{ $item->category }}</p>
                                         </div>
+                                        @endif
                                         <div>
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Tanggal</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ is_string($item->incident_date) ? date('d M Y', strtotime($item->incident_date)) : $item->incident_date->format('d M Y') }}</p>
+                                            <p class="text-sm font-bold text-gray-700">{{ $dateStr }}</p>
                                         </div>
                                         <div>
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Jenis</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $item->status == 'selesai' ? 'Klaim Barang' : 'Laporan Barang Hilang' }}</p>
+                                            <p class="text-sm font-bold text-gray-700">{{ $isLost ? 'Laporan Barang Hilang' : 'Klaim Barang Ditemukan' }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">ID Barang</p>
+                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">ID</p>
                                             <p class="text-sm font-bold text-gray-700">#{{ $item->id }}</p>
                                         </div>
+                                        @if (!empty($item->location))
+                                        <div class="col-span-2">
+                                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Lokasi</p>
+                                            <p class="flex items-center gap-1 text-sm font-bold text-blue-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                                                </svg>
+                                                {{ $item->location }}
+                                            </p>
+                                        </div>
+                                        @endif
                                     </div>
 
+                                    {{-- Riwayat Status --}}
                                     <h3 class="mb-4 text-sm font-bold text-gray-800">Riwayat Status</h3>
                                     <div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
                                         <div class="relative pl-8">
                                             <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-1"></div>
-                                            <p class="text-sm font-bold text-gray-800">{{ $item->status == 'selesai' ? 'Klaim Diajukan' : 'Laporan Diajukan' }}</p>
-                                            <p class="text-xs text-gray-400">Sistem berhasil mencatat riwayat aktivitas Anda</p>
+                                            <p class="text-sm font-bold text-gray-800">{{ $isLost ? 'Laporan Diajukan' : 'Klaim Diajukan' }}</p>
+                                            <p class="text-xs text-gray-400">Sistem berhasil mencatat aktivitas Anda</p>
                                         </div>
                                         <div class="relative pl-8">
-                                            <div class="absolute left-0 top-1 w-4 h-4 {{ $item->status != 'dicari' ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
-                                            <p class="text-sm font-bold {{ $item->status != 'dicari' ? 'text-gray-800' : 'text-gray-300' }}">Sedang Diverifikasi / Proses</p>
+                                            <div class="absolute left-0 top-1 w-4 h-4 {{ $status !== 'dicari' && $status !== 'menunggu' ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
+                                            <p class="text-sm font-bold {{ $status !== 'dicari' && $status !== 'menunggu' ? 'text-gray-800' : 'text-gray-300' }}">
+                                                @if ($isLost)
+                                                    Sedang Dicari / Diverifikasi
+                                                @else
+                                                    {{ $status === 'diterima' ? 'Klaim Diterima ✓' : ($status === 'ditolak' ? 'Klaim Ditolak ✗' : 'Menunggu Verifikasi Admin') }}
+                                                @endif
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -134,12 +202,15 @@
 
                     </div>
                 @empty
-                    <div class="col-span-2 py-12 text-center bg-white border border-gray-100 rounded-2xl">
-                        <p class="text-sm text-gray-400">No activities found.</p>
+                    <div class="w-full py-12 text-center bg-white border border-gray-100 rounded-2xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-3 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                        </svg>
+                        <p class="text-sm text-gray-400">Belum ada aktivitas.</p>
                     </div>
                 @endforelse
             </div>
-            
+
         </div>
     </div>
 </div>

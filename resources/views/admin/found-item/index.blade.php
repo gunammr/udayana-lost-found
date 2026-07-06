@@ -17,8 +17,9 @@
 </div>
 
 <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-
-    <table class="w-full">
+    
+    <div class="overflow-x-auto">
+        <table class="w-full whitespace-nowrap">
 
         <thead class="bg-gray-50">
 
@@ -216,8 +217,8 @@
         @endforelse
 
         </tbody>
-
-    </table>
+        </table>
+    </div>
 
     <div class="px-8 py-5 border-t bg-gray-50">
 
