@@ -21,6 +21,10 @@
                     class="{{ request()->routeIs('claims.laporan') ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-3' : 'text-gray-500 pb-3' }}">
                     Laporan Kehilangan
                 </a>
+                <a href="{{ route('claims.ditemukan') }}"
+                    class="{{ request()->routeIs('claims.ditemukan') ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-3' : 'text-gray-500 pb-3' }}">
+                    Laporan Ditemukan
+                </a>
                 <a href="{{ route('claims.status') }}"
                     class="{{ request()->routeIs('claims.status') ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-3' : 'text-gray-500 pb-3' }}">
                     Status Klaim

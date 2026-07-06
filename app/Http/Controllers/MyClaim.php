@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\LostItem;
+use App\Models\FoundItem;
 use App\Models\Claim;
 
 class MyClaim extends Controller
@@ -21,7 +22,19 @@ class MyClaim extends Controller
                 'dicari_at'    => $item->dicari_at,
                 'ditemukan_at' => $item->ditemukan_at,
                 'selesai_at'   => $item->selesai_at,
-                // phone sudah ada di LostItem (reporter_name & phone kolom)
+            ]));
+
+        // Laporan barang ditemukan yang dibuat user ini
+        $foundItems = FoundItem::where('user_id', Auth::id())
+            ->latest()
+            ->get()
+            ->map(fn ($item) => (object) array_merge($item->toArray(), [
+                'item_type'       => 'found',
+                'created_at'      => $item->created_at,
+                'updated_at'      => $item->updated_at,
+                'diklaim_at'      => $item->diklaim_at,
+                'dikembalikan_at' => $item->dikembalikan_at,
+                'selesai_at'      => $item->selesai_at,
             ]));
 
         // Klaim barang ditemukan yang diajukan user ini
@@ -32,17 +45,14 @@ class MyClaim extends Controller
             ->map(fn ($claim) => (object) [
                 'id'                => $claim->id,
                 'item_name'         => $claim->foundItem?->item_name ?? '-',
-                // description barang (dari found item), bukan pesan klaim
                 'item_description'  => $claim->foundItem?->description ?? '-',
-                // pesan/bukti kepemilikan dari pengklaim
                 'claim_message'     => $claim->message,
-                'description'       => $claim->message,   // fallback untuk card ringkas
+                'description'       => $claim->message,
                 'status'            => $claim->status,
                 'photo_path'        => $claim->foundItem?->photo_path,
                 'incident_date'     => $claim->foundItem?->incident_date ?? $claim->created_at,
                 'category'          => $claim->foundItem?->category ?? '-',
                 'location'          => $claim->foundItem?->location ?? '-',
-                // Kontak = nomor HP pelapor barang ditemukan
                 'phone'             => $claim->foundItem?->phone ?? null,
                 'found_item_id'     => $claim->found_item_id,
                 'item_type'         => 'claim',
@@ -50,41 +60,50 @@ class MyClaim extends Controller
                 'updated_at'        => $claim->updated_at,
             ]);
 
-        return $lostItems->concat($claims)->sortByDesc('incident_date')->values();
+        return collect([])->concat($lostItems)->concat($foundItems)->concat($claims)->sortByDesc('incident_date')->values();
+    }
+
+    private function getCounts($allItems)
+    {
+        return [
+            'totalLaporan'   => $allItems->where('item_type', 'lost')->count(),
+            'totalDitemukan' => $allItems->where('item_type', 'found')->count(),
+            'totalKlaim'     => $allItems->where('item_type', 'claim')->count(),
+        ];
     }
 
     public function index()
     {
         $allItems = $this->allItemsForUser();
+        $counts = $this->getCounts($allItems);
 
-        return view('myclaim.semua_aktivitas', [
-            'items'        => $allItems,
-            'totalLaporan' => $allItems->where('item_type', 'lost')->count(),
-            'totalKlaim'   => $allItems->where('item_type', 'claim')->count(),
-        ]);
+        return view('myclaim.semua_aktivitas', array_merge(['items' => $allItems], $counts));
     }
 
     public function laporan()
     {
         $allItems = $this->allItemsForUser();
         $laporan  = $allItems->where('item_type', 'lost')->values();
+        $counts = $this->getCounts($allItems);
 
-        return view('myclaim.laporan', [
-            'items'        => $laporan,
-            'totalLaporan' => $laporan->count(),
-            'totalKlaim'   => $allItems->where('item_type', 'claim')->count(),
-        ]);
+        return view('myclaim.laporan', array_merge(['items' => $laporan], $counts));
+    }
+
+    public function ditemukan()
+    {
+        $allItems = $this->allItemsForUser();
+        $ditemukan = $allItems->where('item_type', 'found')->values();
+        $counts = $this->getCounts($allItems);
+
+        return view('myclaim.ditemukan', array_merge(['items' => $ditemukan], $counts));
     }
 
     public function status()
     {
         $allItems = $this->allItemsForUser();
         $klaim    = $allItems->where('item_type', 'claim')->values();
+        $counts = $this->getCounts($allItems);
 
-        return view('myclaim.klaim', [
-            'items'        => $klaim,
-            'totalLaporan' => $allItems->where('item_type', 'lost')->count(),
-            'totalKlaim'   => $klaim->count(),
-        ]);
+        return view('myclaim.klaim', array_merge(['items' => $klaim], $counts));
     }
 }
