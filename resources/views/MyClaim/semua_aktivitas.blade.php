@@ -1,15 +1,16 @@
+@use('Illuminate\Support\Str')
 @extends('layouts.app')
 
 @section('content')
 <div class="px-8 py-12 mx-auto max-w-7xl">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
 
         <div class="lg:col-span-1">
             @include('profile.partials.profile_card')
         </div>
 
         <div class="lg:col-span-3">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">Activity History</h1>
+            <h1 class="mb-6 text-3xl font-bold text-gray-800">Activity History</h1>
 
             <div class="flex gap-6 mb-8 text-sm font-medium border-b border-gray-200">
                 <a href="{{ route('claims.index') }}"
@@ -26,7 +27,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex flex-wrap gap-6">
                 @forelse ($items as $item)
                     @php
                         $status = $item->status ?? 'dicari';
@@ -45,16 +46,16 @@
                         };
                     @endphp
 
-                    <div x-data="{ openDetail: false }" class="w-full">
+                    <div x-data="{ openDetail: false }" class="w-full sm:w-[calc(50%-0.75rem)]">
                         
-                        <div class="bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden flex flex-col justify-between hover:shadow-md transition cursor-pointer h-full" 
+                        <div class="flex flex-col justify-between h-full overflow-hidden transition bg-white border border-gray-200 shadow-sm cursor-pointer rounded-2xl hover:shadow-md" 
                              @click="openDetail = true">
                             
-                            <div class="relative h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
+                            <div class="relative flex items-center justify-center h-48 overflow-hidden bg-gray-50">
                                 @if (isset($item->photo_path) && $item->photo_path)
-                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="w-full h-full object-cover">
+                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="object-cover w-full h-full">
                                 @else
-                                    <div class="text-center p-6 text-gray-300">
+                                    <div class="p-6 text-center text-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                     </div>
                                 @endif
@@ -63,9 +64,9 @@
                                 </span>
                             </div>
 
-                            <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div class="flex flex-col justify-between flex-1 p-5">
                                 <div>
-                                    <h4 class="text-lg font-bold text-gray-800 mb-2">{{ $item->item_name }}</h4>
+                                    <h4 class="mb-2 text-lg font-bold text-gray-800">{{ $item->item_name }}</h4>
                                     <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($item->description, 90) }}</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
@@ -78,24 +79,24 @@
                         <div x-show="openDetail" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
                             <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-left" @click.outside="openDetail = false">
                                 
-                                <button @click="openDetail = false" class="absolute top-4 left-4 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10 transition">
+                                <button @click="openDetail = false" class="absolute z-10 p-2 transition rounded-full shadow-md top-4 left-4 bg-white/80 hover:bg-white">
                                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
 
-                                <div class="h-64 w-full relative bg-gray-100">
-                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="w-full h-full object-cover">
+                                <div class="relative w-full h-64 bg-gray-100">
+                                    <img src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}" class="object-cover w-full h-full">
                                     <span class="absolute top-4 right-4 {{ $statusStyle }} px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
                                         {{ $statusLabel }}
                                     </span>
                                 </div>
 
                                 <div class="p-8">
-                                    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                                    <h2 class="mb-2 text-2xl font-bold text-gray-800">
                                         {{ $item->status == 'selesai' ? 'Klaim:' : 'Laporan:' }} {{ $item->item_name }}
                                     </h2>
-                                    <p class="text-gray-500 text-sm mb-6">{{ $item->description }}</p>
+                                    <p class="mb-6 text-sm text-gray-500">{{ $item->description }}</p>
 
-                                    <div class="grid grid-cols-2 gap-y-6 gap-x-4 bg-gray-50 p-6 rounded-2xl mb-6">
+                                    <div class="grid grid-cols-2 p-6 mb-6 gap-y-6 gap-x-4 bg-gray-50 rounded-2xl">
                                         <div>
                                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">Kategori</p>
                                             <p class="text-sm font-bold text-gray-700">Elektronik</p>
@@ -114,10 +115,10 @@
                                         </div>
                                     </div>
 
-                                    <h3 class="font-bold text-gray-800 mb-4 text-sm">Riwayat Status</h3>
+                                    <h3 class="mb-4 text-sm font-bold text-gray-800">Riwayat Status</h3>
                                     <div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
                                         <div class="relative pl-8">
-                                            <div class="absolute left-0 top-1 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-sm"></div>
+                                            <div class="absolute left-0 w-4 h-4 bg-blue-600 border-4 border-white rounded-full shadow-sm top-1"></div>
                                             <p class="text-sm font-bold text-gray-800">{{ $item->status == 'selesai' ? 'Klaim Diajukan' : 'Laporan Diajukan' }}</p>
                                             <p class="text-xs text-gray-400">Sistem berhasil mencatat riwayat aktivitas Anda</p>
                                         </div>
@@ -133,7 +134,7 @@
 
                     </div>
                 @empty
-                    <div class="col-span-2 text-center py-12 bg-white rounded-2xl border border-gray-100">
+                    <div class="col-span-2 py-12 text-center bg-white border border-gray-100 rounded-2xl">
                         <p class="text-sm text-gray-400">No activities found.</p>
                     </div>
                 @endforelse
