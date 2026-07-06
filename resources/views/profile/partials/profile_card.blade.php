@@ -60,13 +60,17 @@
     </a>
 </div>
 
-<div class="grid grid-cols-2 gap-4 mt-4">
-    <div class="p-4 text-center bg-white border border-gray-200 shadow-sm rounded-2xl">
-        <p class="text-2xl font-bold text-gray-800">{{ $totalLaporan ?? 0 }}</p>
-        <p class="mt-1 text-xs text-gray-400">LAPORAN</p>
+<div class="grid grid-cols-3 gap-2 mt-4">
+    <div class="px-1 py-3 text-center bg-white border border-gray-200 shadow-sm rounded-2xl">
+        <p class="text-xl font-bold text-gray-800">{{ $totalLaporan ?? 0 }}</p>
+        <p class="mt-1 text-[9px] font-medium tracking-wide text-gray-400">HILANG</p>
     </div>
-    <div class="p-4 text-center bg-white border border-gray-200 shadow-sm rounded-2xl">
-        <p class="text-2xl font-bold text-gray-800">{{ $totalKlaim ?? 0 }}</p>
-        <p class="mt-1 text-xs text-gray-400">KLAIM</p>
+    <div class="px-1 py-3 text-center bg-white border border-gray-200 shadow-sm rounded-2xl">
+        <p class="text-xl font-bold text-gray-800">{{ $totalDitemukan ?? 0 }}</p>
+        <p class="mt-1 text-[9px] font-medium tracking-wide text-gray-400">DITEMUKAN</p>
+    </div>
+    <div class="px-1 py-3 text-center bg-white border border-gray-200 shadow-sm rounded-2xl">
+        <p class="text-xl font-bold text-gray-800">{{ $totalKlaim ?? 0 }}</p>
+        <p class="mt-1 text-[9px] font-medium tracking-wide text-gray-400">KLAIM</p>
     </div>
 </div>

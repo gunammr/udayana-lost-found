@@ -10,19 +10,26 @@ class LostItemSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil user yang ada atau buat baru
         $users = User::all();
 
-        // Buat 20 laporan barang hilang dengan distribusi status yang realistis
-        LostItem::factory()->count(12)->dicari()->create([
+        // Distribusi status realistis (total 25 laporan)
+        // hilang: baru dilaporkan, belum ada tindakan
+        LostItem::factory()->count(5)->hilang()->create([
             'user_id' => fn () => $users->random()->id,
         ]);
 
-        LostItem::factory()->count(5)->ditemukan()->create([
+        // dicari: petugas sedang mencari
+        LostItem::factory()->count(10)->dicari()->create([
             'user_id' => fn () => $users->random()->id,
         ]);
 
-        LostItem::factory()->count(3)->selesai()->create([
+        // ditemukan: barang berhasil ditemukan
+        LostItem::factory()->count(6)->ditemukan()->create([
+            'user_id' => fn () => $users->random()->id,
+        ]);
+
+        // selesai: barang sudah dikembalikan ke pemilik
+        LostItem::factory()->count(4)->selesai()->create([
             'user_id' => fn () => $users->random()->id,
         ]);
     }
