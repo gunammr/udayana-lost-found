@@ -1,11 +1,10 @@
 
-@use('Illuminate\Support\Str') {{-- 🌟 Tambahkan baris ini di paling atas --}}
+@use('Illuminate\Support\Str') 
 @extends('layouts.app')
 
 @section('content')
 <div class="px-8 py-12 mx-auto max-w-7xl">
     ...
-@section('content')
 <div class="px-8 py-12 mx-auto max-w-7xl">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 

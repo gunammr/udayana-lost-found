@@ -34,15 +34,16 @@
 
 </head>
 
-<body class="bg-background font-sans text-body">
+<body class="font-sans bg-background text-body">
 
-    @include('components.dashboard-navbar')
+    @include('components.navbar')
 
     <main>
 
         @yield('content')
 
     </main>
+    @include('components.footer')
 
 </body>
 
