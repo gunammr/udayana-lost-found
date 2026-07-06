@@ -85,7 +85,10 @@
         </a>
 
         <a href="{{ route('admin.categories.index') }}"
-           class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
+            class="flex items-center gap-4 px-6 py-4 transition
+            {{ request()->routeIs('admin.categories.*')
+                ? 'border-l-4 border-blue-700 bg-blue-50 text-blue-700 font-semibold'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-blue-600' }}">
 
             <img
                 src="{{ asset(
@@ -100,22 +103,10 @@
         </a>
 
         <a href="#"
-           class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
-
-            <img
-                src="{{ asset(
-                    request()->routeIs('admin.locations.*')
-                    ? 'images/icons/lokasi-active.svg'
-                    : 'images/icons/lokasi.svg'
-                ) }}"
-                class="w-5 h-5">
-
-            <span>Kelola Lokasi</span>
-
-        </a>
-
-        <a href="#"
-           class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
+           class="flex items-center gap-4 px-6 py-4 transition
+           {{ request()->routeIs('admin.claims.*')
+               ? 'border-l-4 border-blue-700 bg-blue-50 text-blue-700 font-semibold'
+               : 'text-gray-600 hover:bg-gray-100 hover:text-blue-600' }}">
 
             <img
                 src="{{ asset(
@@ -129,8 +120,11 @@
 
         </a>
 
-        <a href="#"
-           class="flex items-center gap-4 px-6 py-4 hover:bg-gray-100">
+        <a href="{{ route('admin.users.index') }}"
+           class="flex items-center gap-4 px-6 py-4 transition
+           {{ request()->routeIs('admin.users.*')
+               ? 'border-l-4 border-blue-700 bg-blue-50 text-blue-700 font-semibold'
+               : 'text-gray-600 hover:bg-gray-100 hover:text-blue-600' }}">
 
             <img
                 src="{{ asset(
