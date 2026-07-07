@@ -102,7 +102,7 @@
 
         </a>
 
-        <a href="#"
+        <a href="{{ route('admin.claims.index') }}"
            class="flex items-center gap-4 px-6 py-4 transition
            {{ request()->routeIs('admin.claims.*')
                ? 'border-l-4 border-blue-700 bg-blue-50 text-blue-700 font-semibold'

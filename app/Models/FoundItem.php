@@ -49,4 +49,9 @@ class FoundItem extends Model
     {
         return $this->hasMany(Claim::class);
     }
+
+    public function categoryData(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

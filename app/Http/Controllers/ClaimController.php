@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Claim;
 use App\Models\FoundItem;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,5 +50,39 @@ class ClaimController extends Controller
 
         return redirect()->route('found-items.show', $foundItem)
             ->with('success', 'Klaim berhasil diajukan! Tim kami akan segera meninjau permintaanmu.');
+    }
+
+    public function index(Request $request)
+    {
+        $query = Claim::with([
+            'user',
+            'foundItem.categoryData',
+        ]);
+
+        if ($request->status && $request->status != 'semua') {
+            $query->where('status', $request->status);
+        }
+
+        $claims = $query->latest()->get();
+
+        return view('admin.claims.index', compact('claims'));
+    }
+
+    public function verify(Claim $claim)
+    {
+        $claim->update([
+            'status' => 'diterima',
+        ]);
+
+        return back()->with('success', 'Klaim berhasil disetujui.');
+    }
+
+    public function reject(Claim $claim)
+    {
+        $claim->update([
+            'status' => 'ditolak',
+        ]);
+
+        return back()->with('success', 'Klaim berhasil ditolak.');
     }
 }
