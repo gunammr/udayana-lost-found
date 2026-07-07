@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -56,10 +57,12 @@ class FoundItemFactory extends Factory
     {
         $item      = $this->faker->randomElement(self::ITEMS);
         $photoSeed = $this->faker->numberBetween(10, 200);
+        $category = Category::where('category', $item[1])->first();
 
         return [
             'item_name'      => $item[0],
             'category'       => $item[1],
+            'category_id'    => $category?->id,
             'incident_date'  => $this->faker->dateTimeBetween('-6 months', 'now'),
             'location'       => $this->faker->randomElement(self::LOCATIONS),
             'description'    => $item[2],
