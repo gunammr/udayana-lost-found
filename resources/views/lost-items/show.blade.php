@@ -58,13 +58,24 @@
                             </div>
                         @endif
 
-                        {{-- DICARI badge overlay --}}
+                        {{-- STATUS badge overlay --}}
                         <div class="absolute left-4 top-4">
-                            <span class="inline-flex items-center gap-1.5 rounded-full bg-red-500 px-4 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 6.15 6.15a7.5 7.5 0 0 0 10.5 10.5Z" />
-                                </svg>
-                                Dicari
+                            <span class="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg
+                                {{ $lostItem->status === 'selesai' ? 'bg-emerald-500' : ($lostItem->status === 'ditemukan' ? 'bg-blue-500' : 'bg-red-500') }}">
+                                @if($lostItem->status === 'selesai')
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                @elseif($lostItem->status === 'ditemukan')
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                @else
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 6.15 6.15a7.5 7.5 0 0 0 10.5 10.5Z" />
+                                    </svg>
+                                @endif
+                                {{ $lostItem->status }}
                             </span>
                         </div>
 
@@ -174,6 +185,7 @@
                     </div>
 
                     {{-- CTA Buttons --}}
+                    @if($lostItem->status === 'dicari')
                     <div class="flex flex-col gap-3 sm:flex-row">
 
                         {{-- Ajukan Klaim --}}
@@ -197,6 +209,13 @@
                         </a>
 
                     </div>
+                    @else
+                    <div class="rounded-xl bg-gray-50 border border-gray-100 p-4 text-center">
+                        <p class="text-sm font-bold text-gray-500">
+                            Laporan Kehilangan ini telah selesai atau barang sudah ditemukan.
+                        </p>
+                    </div>
+                    @endif
 
                     {{-- Mobile back button --}}
                     <a href="{{ route('lost-items.index') }}"

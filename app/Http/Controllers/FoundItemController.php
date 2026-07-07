@@ -23,7 +23,9 @@ class FoundItemController extends Controller
 
     public function index(Request $request)
     {
-        $query = FoundItem::query()->orderByDesc('created_at');
+        $query = FoundItem::query()
+            ->orderByRaw("FIELD(status, 'ditemukan', 'diklaim', 'dikembalikan', 'selesai')")
+            ->orderByDesc('created_at');
 
         if ($request->filled('search')) {
             $search = $request->input('search');
