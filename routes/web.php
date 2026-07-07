@@ -123,6 +123,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])
         ->name('admin.users.destroy');
+
+    Route::get('/admin/claims', [ClaimController::class, 'index'])
+        ->name('admin.claims.index');
+
+    Route::patch('/admin/claims/{claim}/verify', [ClaimController::class, 'verify'])
+        ->name('admin.claims.verify');
+
+    Route::patch('/admin/claims/{claim}/reject', [ClaimController::class, 'reject'])
+        ->name('admin.claims.reject');
     // Tulis ini di baris paling bawah file routes/web.php Anda
 });
 
