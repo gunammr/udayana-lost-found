@@ -8,17 +8,17 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement("
-            UPDATE found_items f
-            JOIN categories c
-                ON f.category = c.category
-            SET f.category_id = c.id
+            UPDATE found_items
+            SET category_id = (
+                SELECT id FROM categories WHERE categories.category = found_items.category
+            )
         ");
 
         DB::statement("
-            UPDATE lost_items l
-            JOIN categories c
-                ON l.category = c.category
-            SET l.category_id = c.id
+            UPDATE lost_items
+            SET category_id = (
+                SELECT id FROM categories WHERE categories.category = lost_items.category
+            )
         ");
     }
 

@@ -272,7 +272,7 @@
                                             <div class="relative pl-8">
                                                 <div class="absolute left-0 top-0.5 w-4 h-4 {{ $f3 ? 'bg-blue-600' : 'bg-gray-200' }} rounded-full border-4 border-white shadow-sm"></div>
                                                 <p class="text-sm font-bold {{ $f3 ? 'text-gray-800' : 'text-gray-300' }}">Dikembalikan</p>
-                                                <p class="text-xs {{ $f3 ? 'text-gray-400' : 'text-gray-300' }}">Barang telah dikembalikan kepada pemilik sah</p>
+                                                <p class="text-xs {{ $f3 ? 'text-gray-400' : 'text-gray-300' }}">Sedang dalam proses pengembalian</p>
                                                 <p class="text-xs {{ $f3 ? 'text-gray-400' : 'text-gray-300' }} mt-0.5">{{ $f3 && !empty($item->dikembalikan_at) ? \Carbon\Carbon::parse($item->dikembalikan_at)->translatedFormat('d M Y, H:i') : '—' }}</p>
                                             </div>
                                             @php $f4 = $status === 'selesai'; @endphp
