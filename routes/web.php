@@ -71,6 +71,14 @@ Route::middleware(['auth'])->group(function () {
     // Ajukan klaim barang ditemukan
     Route::post('/barang-ditemukan/{foundItem}/klaim', [ClaimController::class, 'store'])
         ->name('claims.store');
+
+    // Tandai barang hilang sebagai telah ditemukan (oleh pemilik laporan)
+    Route::patch('/klaim-saya/laporan/{lostItem}/ditemukan', [LostItemController::class, 'markFound'])
+        ->name('my.lost-items.mark-found');
+
+    // Tandai barang ditemukan sebagai selesai/dikembalikan (oleh pelapor)
+    Route::patch('/klaim-saya/ditemukan/{foundItem}/selesai', [ClaimController::class, 'markFoundItemReturned'])
+        ->name('my.found-items.mark-returned');
     
     Route::get('/profile', [ProfileController::class, 'editCustom'])
         ->name('profile.edit');

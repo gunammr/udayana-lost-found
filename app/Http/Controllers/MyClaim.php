@@ -26,15 +26,24 @@ class MyClaim extends Controller
 
         // Laporan barang ditemukan yang dibuat user ini
         $foundItems = FoundItem::where('user_id', Auth::id())
+            ->with(['acceptedClaim.user'])
             ->latest()
             ->get()
             ->map(fn ($item) => (object) array_merge($item->toArray(), [
-                'item_type'       => 'found',
-                'created_at'      => $item->created_at,
-                'updated_at'      => $item->updated_at,
-                'diklaim_at'      => $item->diklaim_at,
-                'dikembalikan_at' => $item->dikembalikan_at,
-                'selesai_at'      => $item->selesai_at,
+                'item_type'         => 'found',
+                'created_at'        => $item->created_at,
+                'updated_at'        => $item->updated_at,
+                'diklaim_at'        => $item->diklaim_at,
+                'dikembalikan_at'   => $item->dikembalikan_at,
+                'selesai_at'        => $item->selesai_at,
+                'accepted_claimer'  => $item->acceptedClaim?->user
+                    ? (object)[
+                        'name'       => $item->acceptedClaim->user->name,
+                        'phone'      => $item->acceptedClaim->user->phone,
+                        'message'    => $item->acceptedClaim->message,
+                        'photo_path' => $item->acceptedClaim->photo_path,
+                    ]
+                    : null,
             ]));
 
         // Klaim barang ditemukan yang diajukan user ini
@@ -50,6 +59,7 @@ class MyClaim extends Controller
                 'description'       => $claim->message,
                 'status'            => $claim->status,
                 'photo_path'        => $claim->foundItem?->photo_path,
+                'claim_photo_path'  => $claim->photo_path,   // foto bukti dari si pengklaim
                 'incident_date'     => $claim->foundItem?->incident_date ?? $claim->created_at,
                 'category'          => $claim->foundItem?->category ?? '-',
                 'location'          => $claim->foundItem?->location ?? '-',

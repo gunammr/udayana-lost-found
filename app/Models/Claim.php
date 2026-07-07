@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'user_id',
     'found_item_id',
     'message',
+    'photo_path',
     'status',
     'admin_note',
 ])]

@@ -2,6 +2,17 @@
 @extends('layouts.app')
 
 @section('content')
+
+{{-- Flash Messages --}}
+@if (session('success'))
+    <div id="flash-success"
+         class="fixed top-6 left-1/2 z-[200] -translate-x-1/2 flex items-center gap-3 rounded-2xl bg-emerald-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+        {{ session('success') }}
+    </div>
+    <script>setTimeout(()=>{ const el=document.getElementById('flash-success'); if(el) el.remove(); }, 5000);</script>
+@endif
+
 <div class="px-8 py-12 mx-auto max-w-7xl">
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
 
@@ -34,9 +45,10 @@
             <div class="flex flex-wrap gap-6">
                 @forelse ($items as $item)
                     @php
-                        $status  = $item->status ?? 'dicari';
+                        $status  = $item->status ?? 'hilang';
                         [$statusStyle, $statusLabel] = match($status) {
-                            'dicari'    => ['bg-red-100 text-red-700',    'Dicari'],
+                            'hilang'    => ['bg-red-100 text-red-700',    'Hilang'],
+                            'dicari'    => ['bg-amber-100 text-amber-700', 'Dicari'],
                             'ditemukan' => ['bg-blue-100 text-blue-700',  'Ditemukan'],
                             'selesai'   => ['bg-green-100 text-green-700','Selesai'],
                             default     => ['bg-gray-100 text-gray-700',   ucfirst($status)],
@@ -211,8 +223,24 @@
                                         </div>
 
                                     </div>
-                                </div>
 
+                                    {{-- Tombol Telah Ditemukan --}}
+                                    @if (!in_array($status, ['ditemukan', 'selesai']))
+                                        <form method="POST" action="{{ route('my.lost-items.mark-found', $item->id) }}" class="mt-6">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                    onclick="return confirm('Konfirmasi: Apakah barang ini benar-benar sudah ditemukan?')"
+                                                    class="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/25 transition hover:bg-emerald-600 active:scale-95">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Telah Ditemukan
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                </div>
                             </div>
                         </div>
 
