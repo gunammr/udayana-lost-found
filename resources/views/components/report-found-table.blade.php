@@ -50,7 +50,7 @@
                     </td>
 
                     <td>
-                        {{ $item->category }}
+                        {{ optional($item->categoryData)->category }}
                     </td>
 
                     <td>
@@ -59,22 +59,34 @@
 
                     <td>
 
-                        @if($item->status == 'belum_diklaim')
+                        @if($item->status == 'ditemukan')
 
-                            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">
-                                Belum Diklaim
+                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                Ditemukan
                             </span>
 
-                        @elseif($item->status == 'proses_klaim')
+                        @elseif($item->status == 'diklaim')
 
-                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
-                                Proses Klaim
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                Diklaim
+                            </span>
+
+                        @elseif($item->status == 'dikembalikan')
+
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                Dikembalikan
+                            </span>
+
+                        @elseif($item->status == 'selesai')
+
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                Selesai
                             </span>
 
                         @else
 
-                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
-                                Sudah Dikembalikan
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                {{ ucfirst($item->status) }}
                             </span>
 
                         @endif

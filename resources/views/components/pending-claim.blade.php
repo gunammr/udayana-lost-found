@@ -31,8 +31,9 @@
                     Oleh : {{ $claim->user->name }}
                 </p>
 
-                <a href="#"
-                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-center block">
+                <a
+                    href="{{ route('admin.claims.index') }}"
+                    class="mt-4 block w-full rounded-lg bg-blue-600 py-2 text-center text-white hover:bg-blue-700">
 
                     Review Klaim
 
