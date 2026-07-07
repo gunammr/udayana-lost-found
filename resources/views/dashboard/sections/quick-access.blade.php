@@ -16,45 +16,32 @@
 
                 <div class="grid grid-cols-2 gap-6 mt-8">
 
-                    <x-dashboard-action-card
-                        title="Cari Barang Hilang"
-                        icon="images/Cari_Biru.png"
-                        href="{{ route('lost-items.index') }}"/>
+                    <x-dashboard-action-card title="Cari Barang Hilang" icon="images/Cari_Biru.png"
+                        href="{{ route('lost-items.index') }}" />
 
-                    <x-dashboard-action-card
-                        title="Lapor Barang Ditemukan"
-                        icon="images/Lapor_Biru.png"
-                        href="{{ route('found-items.create') }}"/>
+                    <x-dashboard-action-card title="Lapor Barang Ditemukan" icon="images/Lapor_Biru.png"
+                        href="{{ route('found-items.create') }}" />
 
-                    <x-dashboard-action-card
-                        title="Status Klaim Saya"
-                        icon="images/Status_Biru.png"
-                        href="{{ route('claims.index') }}"/>
+                    <x-dashboard-action-card title="Status Klaim Saya" icon="images/Status_Biru.png"
+                        href="{{ route('claims.index') }}" />
 
-                    <x-dashboard-action-card
-                        title="Edit Profil"
-                        icon="images/Profil_Biru.png"
-                        href="{{ route('profile.edit') }}"/>
+                    <x-dashboard-action-card title="Edit Profil" icon="images/Profil_Biru.png"
+                        href="{{ route('profile.edit') }}" />
 
                 </div>
 
             </div>
 
             {{-- RIGHT --}}
-
             <div class="bg-white rounded-3xl shadow-card p-8">
 
                 <div class="flex justify-between items-center">
 
-                    <h2
-                        class="text-3xl font-bold text-primary-dark">
-
+                    <h2 class="text-3xl font-bold text-primary-dark">
                         Aktivitas Terkini
-
                     </h2>
 
-                    <a href="#"
-                        class="text-primary font-semibold">
+                    <a href="{{ route('lost-items.index') }}" class="text-primary font-semibold hover:underline">
 
                         Lihat Semua
 
@@ -64,77 +51,111 @@
 
                 <div class="mt-8 space-y-8">
 
-                    @forelse (($recentLostItems ?? collect()) as $item)
+                    @forelse($recentActivities as $activity)
+
                         <div class="flex gap-5">
 
+                            {{-- FOTO / ICON --}}
                             <div class="h-16 w-16 flex-none overflow-hidden rounded-xl bg-blue-100">
 
-                                @if ($item->photo_path)
-                                    <img
-                                        src="{{ asset('storage/' . $item->photo_path) }}"
-                                        alt="Foto {{ $item->item_name }}"
+                                @if ($activity['photo'])
+                                    <img src="{{ asset('storage/' . $activity['photo']) }}"
                                         class="h-full w-full object-cover">
                                 @else
                                     <div class="flex h-full w-full items-center justify-center">
-                                        <img
-                                            src="{{ asset('images/Pencarian.png') }}"
-                                            alt=""
-                                            class="w-7">
+
+                                        @if ($activity['type'] == 'lost')
+                                            <img src="{{ asset('images/Pencarian.png') }}" class="w-7">
+                                        @elseif($activity['type'] == 'found')
+                                            <img src="{{ asset('images/Aman.png') }}" class="w-7">
+                                        @else
+                                            <img src="{{ asset('images/Aman.png') }}" class="w-7">
+                                        @endif
+
                                     </div>
                                 @endif
 
                             </div>
 
-                            <div class="min-w-0 flex-1">
+                            {{-- KONTEN --}}
+                            <div class="flex-1 min-w-0">
 
-                                <div class="flex gap-4 justify-between">
+                                <div class="flex justify-between gap-4">
 
-                                    <div class="min-w-0">
+                                    <div>
 
-                                        <h3 class="truncate font-semibold">
+                                        <h3 class="font-semibold truncate">
 
-                                            {{ $item->item_name }}
+                                            {{ $activity['title'] }}
 
                                         </h3>
 
                                         <p class="text-body">
 
-                                            Laporan Kehilangan
+                                            @switch($activity['type'])
+                                                @case('lost')
+                                                    Laporan Kehilangan
+                                                @break
+
+                                                @case('found')
+                                                    Barang Ditemukan
+                                                @break
+
+                                                @case('claim')
+                                                    Pengajuan Klaim
+                                                @break
+                                            @endswitch
 
                                         </p>
 
                                     </div>
 
-                                    <span class="flex-none text-sm text-gray-400">
+                                    <span class="text-sm text-gray-400 whitespace-nowrap">
 
-                                        {{ $item->created_at?->diffForHumans() }}
+                                        {{ $activity['created_at']->diffForHumans() }}
 
                                     </span>
 
                                 </div>
 
-                                <span
-                                    class="inline-block mt-3 px-4 py-1 rounded-full text-sm bg-gray-100">
+                                {{-- Badge Status --}}
+                                @php
 
-                                    {{ str($item->status)->replace('_', ' ')->title() }}
+                                    $badge = match ($activity['type']) {
+                                        'lost' => 'bg-red-100 text-red-600',
+
+                                        'found' => 'bg-yellow-100 text-yellow-700',
+
+                                        'claim' => 'bg-blue-100 text-primary',
+
+                                        default => 'bg-gray-100 text-gray-700',
+                                    };
+
+                                @endphp
+
+                                <span class="inline-flex mt-3 px-4 py-1 rounded-full text-sm {{ $badge }}">
+
+                                    {{ Str::headline($activity['status']) }}
 
                                 </span>
 
                             </div>
 
                         </div>
-                    @empty
-                        <div class="rounded-xl border border-dashed border-blue-100 bg-blue-50/50 px-5 py-6 text-center text-body">
-                            Belum ada laporan terbaru.
-                        </div>
-                    @endforelse
+
+                        @empty
+
+                            <div
+                                class="rounded-xl border border-dashed border-blue-100 bg-blue-50 px-5 py-6 text-center text-body">
+
+                                Belum ada aktivitas.
+
+                            </div>
+
+                        @endforelse
+
+                    </div>
 
                 </div>
 
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
+    </section>
