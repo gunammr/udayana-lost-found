@@ -155,9 +155,13 @@
                         <div class="mt-3 flex items-center gap-4">
 
                             {{-- Avatar --}}
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-                                {{ mb_strtoupper(mb_substr($lostItem->reporter_name, 0, 1)) }}
-                            </div>
+                            @if ($lostItem->user && $lostItem->user->avatar_path)
+                                <img src="{{ asset('storage/' . $lostItem->user->avatar_path) }}" class="object-cover w-12 h-12 border border-primary/20 rounded-full">
+                            @else
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+                                    {{ mb_strtoupper(mb_substr($lostItem->reporter_name, 0, 1)) }}
+                                </div>
+                            @endif
 
                             <div>
                                 <p class="font-semibold text-primary-dark">{{ $lostItem->reporter_name }}</p>

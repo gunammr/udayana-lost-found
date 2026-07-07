@@ -44,6 +44,7 @@ class MyClaim extends Controller
                         'phone'      => $item->acceptedClaim->user->phone,
                         'message'    => $item->acceptedClaim->message,
                         'photo_path' => $item->acceptedClaim->photo_path,
+                        'avatar_path'=> $item->acceptedClaim->user->avatar_path,
                     ]
                     : null,
             ]));

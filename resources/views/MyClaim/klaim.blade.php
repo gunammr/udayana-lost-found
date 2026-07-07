@@ -203,7 +203,7 @@
                                                 <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-2">Foto Bukti</p>
                                                 <img src="{{ \Illuminate\Support\Str::startsWith($claimPhotoPath, ['http://', 'https://']) ? $claimPhotoPath : asset('storage/' . $claimPhotoPath) }}"
                                                      alt="Foto bukti klaim"
-                                                     class="w-full rounded-xl object-cover max-h-48 border border-gray-100">
+                                                     class="w-full aspect-square rounded-xl object-contain bg-gray-50 border border-gray-100">
                                             </div>
                                             @endif
                                             @endif

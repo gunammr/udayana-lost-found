@@ -344,9 +344,13 @@
 
                                             {{-- Nama & Kontak --}}
                                             <div class="flex items-center gap-4">
-                                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-lg font-bold text-emerald-700">
-                                                    {{ mb_strtoupper(mb_substr($claimer->name, 0, 1)) }}
-                                                </div>
+                                                @if(isset($claimer->avatar_path) && $claimer->avatar_path)
+                                                    <img src="{{ asset('storage/' . $claimer->avatar_path) }}" class="object-cover w-12 h-12 border border-emerald-200 rounded-full">
+                                                @else
+                                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-lg font-bold text-emerald-700">
+                                                        {{ mb_strtoupper(mb_substr($claimer->name, 0, 1)) }}
+                                                    </div>
+                                                @endif
                                                 <div>
                                                     <p class="font-semibold text-emerald-800">{{ $claimer->name }}</p>
                                                     @if (!empty($claimer->phone))
@@ -375,7 +379,7 @@
                                                     <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Foto Bukti</p>
                                                     <img src="{{ Str::startsWith($claimer->photo_path, ['http://', 'https://']) ? $claimer->photo_path : asset('storage/' . $claimer->photo_path) }}"
                                                          alt="Foto bukti klaim"
-                                                         class="w-full rounded-xl object-cover max-h-48 border border-emerald-100">
+                                                         class="w-full aspect-square rounded-xl object-contain bg-emerald-50 border border-emerald-100">
                                                 </div>
                                             @endif
                                         </div>

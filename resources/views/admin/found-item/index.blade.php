@@ -61,7 +61,7 @@
                             @if($item->photo_path)
 
                                 <img
-                                    src="{{ $item->photo_path }}"
+                                    src="{{ Str::startsWith($item->photo_path, ['http://', 'https://']) ? $item->photo_path : asset('storage/' . $item->photo_path) }}"
                                     class="w-full h-full object-cover">
 
                             @else

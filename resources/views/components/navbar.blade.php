@@ -56,9 +56,13 @@
                         class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary border border-primary/30 rounded-xl bg-soft-blue/30 hover:bg-soft-blue transition">
 
                         {{-- Avatar initial --}}
-                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white text-xs font-bold shrink-0">
-                            {{ mb_strtoupper(mb_substr(Auth::user()->name, 0, 1)) }}
-                        </span>
+                        @if (Auth::user()->avatar_path)
+                            <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" class="object-cover w-7 h-7 rounded-full shrink-0">
+                        @else
+                            <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white text-xs font-bold shrink-0">
+                                {{ mb_strtoupper(mb_substr(Auth::user()->name, 0, 1)) }}
+                            </span>
+                        @endif
                         <a> 
                             Profile
                         </a>

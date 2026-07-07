@@ -62,9 +62,12 @@ class LostItemFactory extends Factory
             'incident_date' => $incidentDate,
             'location'      => $this->faker->randomElement(self::LOCATIONS),
             'description'   => $item[2],
-            'photo_path'    => $this->faker->boolean(70)
-                ? "https://picsum.photos/seed/{$photoSeed}/800/600"
-                : null,
+            'photo_path'    => 'imagesdemo/' . $this->faker->randomElement([
+                'airpods.png', 'catatankuliah.png', 'chargerlaptop.png',
+                'dompetcoklat.png', 'dompetmerah.png', 'handphone.png',
+                'jamtangan.png', 'kacamatahitam.png', 'ktm.png',
+                'kuncikamar.png', 'lenovothinkpad.png'
+            ]),
             'reporter_name' => $this->faker->name(),
             'phone'         => $this->faker->numerify('08##########'),
             // Default: hilang (belum ada update status)

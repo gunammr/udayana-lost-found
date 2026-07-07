@@ -428,7 +428,7 @@
             {{-- Foto Bukti --}}
             <div class="col-span-2" id="detailPhotoWrapper" style="display:none">
                 <label class="text-sm text-gray-500">Foto Bukti</label>
-                <img id="detailPhoto" src="" alt="Foto bukti klaim" class="mt-2 w-full max-h-56 rounded-xl object-cover border border-gray-200">
+                <img id="detailPhoto" src="" alt="Foto bukti klaim" class="mt-2 w-full aspect-square rounded-xl object-contain bg-gray-50 border border-gray-200">
             </div>
 
             <div class="col-span-2">
