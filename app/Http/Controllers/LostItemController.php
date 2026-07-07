@@ -22,7 +22,9 @@ class LostItemController extends Controller
 
     public function index(Request $request)
     {
-        $query = LostItem::query()->orderByDesc('created_at');
+        $query = LostItem::query()
+            ->orderByRaw("FIELD(status, 'hilang', 'dicari', 'ditemukan', 'selesai')")
+            ->orderByDesc('created_at');
 
         if ($request->filled('search')) {
             $search = $request->input('search');
