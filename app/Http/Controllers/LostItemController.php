@@ -74,7 +74,7 @@ class LostItemController extends Controller
         }
 
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'menunggu_verifikasi';
+        $validated['status'] = 'hilang';
 
         LostItem::create($validated);
 
