@@ -89,8 +89,8 @@ class LostItemFactory extends Factory
     public function dicari(): static
     {
         return $this->state(function (array $attrs) {
-            $base = $attrs['created_at'] ?? now()->subDays(rand(3, 30));
-            $dicariAt = $this->faker->dateTimeBetween($base, '+2 hours');
+            $base = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(3, 30)));
+            $dicariAt = (clone $base)->addHours(rand(1, 48));
             return [
                 'status'      => 'dicari',
                 'dicari_at'   => $dicariAt,
@@ -104,9 +104,9 @@ class LostItemFactory extends Factory
     public function ditemukan(): static
     {
         return $this->state(function (array $attrs) {
-            $base     = $attrs['created_at'] ?? now()->subDays(rand(5, 60));
-            $dicariAt    = $this->faker->dateTimeBetween($base, '+3 hours');
-            $ditemukanAt = $this->faker->dateTimeBetween($dicariAt, '+2 days');
+            $base     = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(5, 60)));
+            $dicariAt    = (clone $base)->addHours(rand(1, 48));
+            $ditemukanAt = (clone $dicariAt)->addDays(rand(1, 5));
             return [
                 'status'      => 'ditemukan',
                 'dicari_at'   => $dicariAt,
@@ -120,10 +120,10 @@ class LostItemFactory extends Factory
     public function selesai(): static
     {
         return $this->state(function (array $attrs) {
-            $base     = $attrs['created_at'] ?? now()->subDays(rand(10, 90));
-            $dicariAt    = $this->faker->dateTimeBetween($base, '+3 hours');
-            $ditemukanAt = $this->faker->dateTimeBetween($dicariAt, '+2 days');
-            $selesaiAt   = $this->faker->dateTimeBetween($ditemukanAt, '+5 days');
+            $base     = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(10, 90)));
+            $dicariAt    = (clone $base)->addHours(rand(1, 48));
+            $ditemukanAt = (clone $dicariAt)->addDays(rand(1, 5));
+            $selesaiAt   = (clone $ditemukanAt)->addDays(rand(1, 7));
             return [
                 'status'      => 'selesai',
                 'dicari_at'   => $dicariAt,

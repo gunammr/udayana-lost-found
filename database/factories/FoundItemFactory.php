@@ -91,8 +91,8 @@ class FoundItemFactory extends Factory
     public function diklaim(): static
     {
         return $this->state(function (array $attrs) {
-            $base      = $attrs['created_at'] ?? now()->subDays(rand(3, 30));
-            $diklaimAt = $this->faker->dateTimeBetween($base, '+5 days');
+            $base      = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(3, 30)));
+            $diklaimAt = (clone $base)->addDays(rand(1, 5));
             return [
                 'status'         => 'diklaim',
                 'diklaim_at'     => $diklaimAt,
@@ -106,9 +106,9 @@ class FoundItemFactory extends Factory
     public function dikembalikan(): static
     {
         return $this->state(function (array $attrs) {
-            $base            = $attrs['created_at'] ?? now()->subDays(rand(5, 60));
-            $diklaimAt       = $this->faker->dateTimeBetween($base, '+5 days');
-            $dikembalikanAt  = $this->faker->dateTimeBetween($diklaimAt, '+3 days');
+            $base            = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(5, 60)));
+            $diklaimAt       = (clone $base)->addDays(rand(1, 5));
+            $dikembalikanAt  = (clone $diklaimAt)->addDays(rand(1, 3));
             return [
                 'status'         => 'dikembalikan',
                 'diklaim_at'     => $diklaimAt,
@@ -122,10 +122,10 @@ class FoundItemFactory extends Factory
     public function selesai(): static
     {
         return $this->state(function (array $attrs) {
-            $base            = $attrs['created_at'] ?? now()->subDays(rand(10, 90));
-            $diklaimAt       = $this->faker->dateTimeBetween($base, '+5 days');
-            $dikembalikanAt  = $this->faker->dateTimeBetween($diklaimAt, '+3 days');
-            $selesaiAt       = $this->faker->dateTimeBetween($dikembalikanAt, '+2 days');
+            $base            = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(10, 90)));
+            $diklaimAt       = (clone $base)->addDays(rand(1, 5));
+            $dikembalikanAt  = (clone $diklaimAt)->addDays(rand(1, 3));
+            $selesaiAt       = (clone $dikembalikanAt)->addDays(rand(1, 2));
             return [
                 'status'         => 'selesai',
                 'diklaim_at'     => $diklaimAt,
