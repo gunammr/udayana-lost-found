@@ -188,8 +188,25 @@
                                             {{-- Bukti Kepemilikan: pesan dari pengklaim --}}
                                             <div class="col-span-2 pt-1">
                                                 <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-2">Bukti Kepemilikan</p>
-                                                <p class="text-sm text-gray-600 leading-relaxed">{{ $claimMessage }}</p>
+                                                <p class="text-sm text-gray-600 leading-relaxed break-words">{{ $claimMessage }}</p>
                                             </div>
+
+                                            {{-- Foto Bukti (jika ada) --}}
+                                            @if (!empty($item->photo_path) && $item->item_type === 'claim')
+                                            @php
+                                                // photo_path dari claim sendiri (bukan found item)
+                                                // Diakses via klaim object yang dipetakan di MyClaim controller
+                                                $claimPhotoPath = $item->claim_photo_path ?? null;
+                                            @endphp
+                                            @if (!empty($claimPhotoPath))
+                                            <div class="col-span-2">
+                                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-2">Foto Bukti</p>
+                                                <img src="{{ \Illuminate\Support\Str::startsWith($claimPhotoPath, ['http://', 'https://']) ? $claimPhotoPath : asset('storage/' . $claimPhotoPath) }}"
+                                                     alt="Foto bukti klaim"
+                                                     class="w-full rounded-xl object-cover max-h-48 border border-gray-100">
+                                            </div>
+                                            @endif
+                                            @endif
                                         </div>
                                     </div>
 

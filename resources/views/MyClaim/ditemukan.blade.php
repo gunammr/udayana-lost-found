@@ -2,6 +2,17 @@
 @extends('layouts.app')
 
 @section('content')
+
+{{-- Flash Messages --}}
+@if (session('success'))
+    <div id="flash-success"
+         class="fixed top-6 left-1/2 z-[200] -translate-x-1/2 flex items-center gap-3 rounded-2xl bg-emerald-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+        {{ session('success') }}
+    </div>
+    <script>setTimeout(()=>{ const el=document.getElementById('flash-success'); if(el) el.remove(); }, 5000);</script>
+@endif
+
 <div class="px-8 py-12 mx-auto max-w-7xl">
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
 
@@ -118,6 +129,20 @@
                                     <h4 class="mb-2 text-lg font-bold text-gray-800">{{ $item->item_name }}</h4>
                                     <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($cardSummary, 90) }}</p>
                                 </div>
+                                {{-- Tampilkan info pengeklaim di card jika status selesai --}}
+                                @if ($itemType === 'found' && $status === 'selesai' && !empty($item->accepted_claimer))
+                                    <div class="mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-100 px-3 py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        <div class="min-w-0">
+                                            <p class="text-xs font-bold text-emerald-700 truncate">{{ $item->accepted_claimer->name }}</p>
+                                            @if (!empty($item->accepted_claimer->phone))
+                                                <p class="text-[10px] text-emerald-600">{{ $item->accepted_claimer->phone }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
                                     <span class="flex items-center gap-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -304,6 +329,75 @@
                                         @endif
 
                                     </div>
+                                    {{-- end riwayat status --}}
+
+                                    {{-- Info pengeklaim jika status dikembalikan atau selesai --}}
+                                    @if ($itemType === 'found' && in_array($status, ['dikembalikan', 'selesai']) && !empty($item->accepted_claimer))
+                                        @php $claimer = $item->accepted_claimer; @endphp
+                                        <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 space-y-4">
+                                            <h3 class="flex items-center gap-2 text-sm font-bold text-emerald-700">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                                Informasi Pengeklaim
+                                            </h3>
+
+                                            {{-- Nama & Kontak --}}
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-lg font-bold text-emerald-700">
+                                                    {{ mb_strtoupper(mb_substr($claimer->name, 0, 1)) }}
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold text-emerald-800">{{ $claimer->name }}</p>
+                                                    @if (!empty($claimer->phone))
+                                                        <a href="tel:{{ $claimer->phone }}" class="mt-0.5 flex items-center gap-1 text-xs text-emerald-600 hover:underline">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                            </svg>
+                                                            {{ $claimer->phone }}
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            {{-- Pesan Bukti Kepemilikan --}}
+                                            @if (!empty($claimer->message))
+                                                <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                                                    <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Bukti Kepemilikan</p>
+                                                    <p class="text-sm leading-relaxed text-gray-700 break-words">{{ $claimer->message }}</p>
+                                                </div>
+                                            @endif
+
+
+                                            {{-- Foto Bukti --}}
+                                            @if (!empty($claimer->photo_path))
+                                                <div>
+                                                    <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Foto Bukti</p>
+                                                    <img src="{{ Str::startsWith($claimer->photo_path, ['http://', 'https://']) ? $claimer->photo_path : asset('storage/' . $claimer->photo_path) }}"
+                                                         alt="Foto bukti klaim"
+                                                         class="w-full rounded-xl object-cover max-h-48 border border-emerald-100">
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+
+
+                                    {{-- Tombol Telah Dikembalikan (hanya jika status dikembalikan) --}}
+                                    @if ($itemType === 'found' && $status === 'dikembalikan')
+                                        <form method="POST" action="{{ route('my.found-items.mark-returned', $item->id) }}" class="mt-4">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                    onclick="return confirm('Konfirmasi: Apakah barang ini benar-benar sudah dikembalikan ke pemiliknya?')"
+                                                    class="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-700 active:scale-95">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                Telah Dikembalikan ke Pemilik
+                                            </button>
+                                        </form>
+                                    @endif
+
                                 </div>
                                 {{-- end konten modal --}}
 
