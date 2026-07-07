@@ -25,7 +25,7 @@
 
             </div>
 
-            <a href="#"
+            <a href="{{ route('lost-items.create') }}"
 
                 class="bg-primary
                        hover:bg-primary-hover
