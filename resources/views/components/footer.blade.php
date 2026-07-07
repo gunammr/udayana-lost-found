@@ -32,14 +32,14 @@
 
                 <ul class="mt-4 space-y-2.5 text-sm">
                     <li>
-                        <a href="#" class="text-body hover:text-primary transition-colors duration-200">
+                        <p class="text-body hover:text-primary transition-colors duration-200">
                             Hubungi Kami
-                        </a>
+                        </p>
                     </li>
                     <li>
-                        <a href="#" class="text-body hover:text-primary transition-colors duration-200">
+                        <p class="text-body hover:text-primary transition-colors duration-200">
                             Peta Kampus
-                        </a>
+                        </p>
                     </li>
                 </ul>
 
@@ -54,14 +54,14 @@
 
                 <ul class="mt-4 space-y-2.5 text-sm">
                     <li>
-                        <a href="#" class="text-body hover:text-primary transition-colors duration-200">
+                        <p class="text-body hover:text-primary transition-colors duration-200">
                             Syarat & Ketentuan
-                        </a>
+                        </p>
                     </li>
                     <li>
-                        <a href="#" class="text-body hover:text-primary transition-colors duration-200">
+                        <p class="text-body hover:text-primary transition-colors duration-200">
                             Kebijakan Privasi
-                        </a>
+                        </p>
                     </li>
                 </ul>
 
