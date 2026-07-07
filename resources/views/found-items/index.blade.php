@@ -149,8 +149,17 @@
                                 @endif
 
                                 {{-- Status badge --}}
-                                <span class="absolute left-3 top-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow">
-                                    Ditemukan
+                                @php
+                                    $statusColors = [
+                                        'ditemukan' => 'bg-emerald-500',
+                                        'diklaim' => 'bg-amber-500',
+                                        'dikembalikan' => 'bg-blue-500',
+                                        'selesai' => 'bg-gray-500',
+                                    ];
+                                    $bgColor = $statusColors[$item->status] ?? 'bg-gray-500';
+                                @endphp
+                                <span class="absolute left-3 top-3 rounded-full {{ $bgColor }} px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow">
+                                    {{ str_replace('_', ' ', $item->status) }}
                                 </span>
 
                             </div>

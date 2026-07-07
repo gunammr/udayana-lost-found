@@ -14,12 +14,11 @@
 
         </div>
 
-        <button
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-
+        <a
+            href="{{ route('admin.lost-items.index') }}"
+            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
             Lihat Semua
-
-        </button>
+        </a>
 
     </div>
 

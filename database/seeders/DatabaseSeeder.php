@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             'program_studi' => 'Teknik Informatika',
             'fakultas'      => 'Teknik',
             'phone'         => '081234567890',
+            'role'          => 'admin',
         ]);
 
         // Buat 10 user tambahan dengan profil lengkap

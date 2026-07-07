@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Status alur: ditemukan → diklaim → dikembalikan → selesai
+ */
 #[Fillable([
     'user_id',
     'item_name',
@@ -19,16 +22,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'reporter_name',
     'phone',
     'status',
+    'diklaim_at',
+    'dikembalikan_at',
+    'selesai_at',
 ])]
 class FoundItem extends Model
 {
-    /** @use HasFactory<\Database\Factories\FoundItemFactory> */
     use HasFactory;
 
     protected function casts(): array
     {
         return [
-            'incident_date' => 'date',
+            'incident_date'   => 'date',
+            'diklaim_at'      => 'datetime',
+            'dikembalikan_at' => 'datetime',
+            'selesai_at'      => 'datetime',
         ];
     }
 
@@ -40,5 +48,10 @@ class FoundItem extends Model
     public function claims(): HasMany
     {
         return $this->hasMany(Claim::class);
+    }
+
+    public function categoryData(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }
