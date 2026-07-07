@@ -12,7 +12,8 @@ class MyClaim extends Controller
     private function allItemsForUser()
     {
         // Laporan barang hilang yang dibuat user ini
-        $lostItems = LostItem::where('user_id', Auth::id())
+        $lostItems = LostItem::with('latestFoundReport')
+            ->where('user_id', Auth::id())
             ->latest()
             ->get()
             ->map(fn ($item) => (object) array_merge($item->toArray(), [
@@ -22,6 +23,7 @@ class MyClaim extends Controller
                 'dicari_at'    => $item->dicari_at,
                 'ditemukan_at' => $item->ditemukan_at,
                 'selesai_at'   => $item->selesai_at,
+                'latestFoundReport' => $item->latestFoundReport,
             ]));
 
         // Laporan barang ditemukan yang dibuat user ini
