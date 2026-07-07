@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
 
         // Seed data dalam urutan yang benar (dependencies first)
         $this->call([
+            CategorySeeder::class,   // kategori
             FoundItemSeeder::class,  // barang ditemukan
             LostItemSeeder::class,   // barang hilang
             ClaimSeeder::class,      // klaim (bergantung pada found_items & users)
