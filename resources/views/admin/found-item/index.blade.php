@@ -147,7 +147,7 @@
 
                     @elseif($item->status == 'diklaim')
 
-                        <span class="inline-flex px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
+                        <span class="inline-flex px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
                             Diklaim
                         </span>
                     

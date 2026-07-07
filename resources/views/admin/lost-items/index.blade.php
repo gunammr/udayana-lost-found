@@ -142,9 +142,17 @@
                 {{-- Status --}}
                 <td class="px-6 py-6 text-center">
 
-                    @if($item->status == 'dicari')
+                    @if($item->status == 'hilang')
 
                         <span class="inline-flex px-4 py-2 rounded-full bg-red-100 text-red-600 font-semibold text-sm">
+
+                            Hilang
+
+                        </span>
+
+                    @elseif($item->status == 'dicari')
+
+                        <span class="inline-flex px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
 
                             Dicari
 
@@ -152,25 +160,17 @@
 
                     @elseif($item->status == 'ditemukan')
 
-                        <span class="inline-flex px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
+                        <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
 
                             Ditemukan
 
                         </span>
 
-                    @elseif($item->status == 'selesai')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-
-                            Diklaim
-
-                        </span>
-
                     @else
 
-                        <span class="inline-flex px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
+                        <span class="inline-flex px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
 
-                            {{ ucfirst($item->status) }}
+                            Selesai
 
                         </span>
 

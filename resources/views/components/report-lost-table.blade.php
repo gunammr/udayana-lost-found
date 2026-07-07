@@ -50,7 +50,7 @@
                     </td>
 
                     <td>
-                        {{ $item->category }}
+                        {{ optional($item->categoryData)->category }}
                     </td>
 
                     <td>
@@ -59,21 +59,27 @@
 
                     <td>
 
-                        @if($item->status == 'dicari')
+                        @if($item->status == 'hilang')
 
                             <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">
+                                Hilang
+                            </span>
+
+                        @elseif($item->status == 'dicari')
+
+                            <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm">
                                 Dicari
                             </span>
 
                         @elseif($item->status == 'ditemukan')
 
-                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
+                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
                                 Ditemukan
                             </span>
 
                         @else
 
-                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
                                 Selesai
                             </span>
 
