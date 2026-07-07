@@ -170,7 +170,7 @@
 
                             <p class="text-sm text-gray-500">
 
-                                {{ optional($claim->foundItem)->location }}
+                                {{ optional($claim->foundItem)->item_name }}
 
                             </p>
 

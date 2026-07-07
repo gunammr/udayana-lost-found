@@ -48,6 +48,13 @@ class ClaimController extends Controller
             'status'        => 'menunggu',
         ]);
 
+        // Ubah status barang menjadi sedang diklaim
+
+        $updated = $foundItem->update([
+            'status' => 'diklaim',
+            'diklaim_at' => now(),
+        ]);
+
         return redirect()->route('found-items.show', $foundItem)
             ->with('success', 'Klaim berhasil diajukan! Tim kami akan segera meninjau permintaanmu.');
     }
@@ -72,6 +79,11 @@ class ClaimController extends Controller
     {
         $claim->update([
             'status' => 'diterima',
+        ]);
+
+        $claim->foundItem->update([
+            'status' => 'dikembalikan',
+            'dikembalikan_at' => now(),
         ]);
 
         return back()->with('success', 'Klaim berhasil disetujui.');
