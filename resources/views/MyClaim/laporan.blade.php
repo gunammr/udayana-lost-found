@@ -31,7 +31,9 @@
                 @forelse ($items as $item)
                     {{-- DEFINISIKAN STATUS DI SINI --}}
                     @php
+                        $foundReport = $item->latestFoundReport ?? null;
                         $status = $item->status ?? 'dicari';
+                        $status = $foundReport ? 'ditemukan' : $status;
                         $statusStyle = match($status) {
                             'dicari' => 'bg-red-100 text-red-800',
                             'ditemukan' => 'bg-blue-100 text-blue-800',
@@ -73,6 +75,11 @@
                                 <div>
                                     <h4 class="text-lg font-bold text-gray-800 mb-2">{{ $item->item_name }}</h4>
                                     <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($item->description, 90) }}</p>
+                                    @if ($foundReport)
+                                        <div class="mt-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-800">
+                                            Ditemukan di {{ $foundReport->location }} oleh {{ $foundReport->reporter_name }}.
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
@@ -153,6 +160,20 @@
                                             <span class="col-span-2 font-medium">Sesuai deskripsi di atas</span>
                                         </div>
                                     </div>
+
+                                    @if ($foundReport)
+                                        <div class="rounded-2xl border border-blue-100 bg-blue-50 p-5 mb-6">
+                                            <p class="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-2">Info Barang Ditemukan</p>
+                                            <p class="text-sm font-bold text-gray-800">{{ $foundReport->item_name }}</p>
+                                            <p class="mt-2 text-sm text-gray-600">{{ $foundReport->description }}</p>
+                                            <div class="mt-4 grid gap-2 text-xs text-gray-600 sm:grid-cols-2">
+                                                <p><span class="font-bold text-gray-700">Lokasi:</span> {{ $foundReport->location }}</p>
+                                                <p><span class="font-bold text-gray-700">Penemu:</span> {{ $foundReport->reporter_name }}</p>
+                                                <p><span class="font-bold text-gray-700">Kontak:</span> {{ $foundReport->phone }}</p>
+                                                <p><span class="font-bold text-gray-700">Tanggal:</span> {{ $foundReport->incident_date->format('d M Y') }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <h3 class="font-bold text-gray-800 mb-4 text-sm">Riwayat Status</h3>
                                     <div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">

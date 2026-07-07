@@ -52,6 +52,17 @@
                     </div>
                 @endif
 
+                @if (!empty($linkedLostItem))
+                    <div class="mt-8 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-900">
+                        <p class="font-bold">
+                            Menanggapi laporan barang hilang: {{ $linkedLostItem->item_name }}
+                        </p>
+                        <p class="mt-1">
+                            Setelah laporan ini dikirim, pemilik bisa melihat informasi temuan dari halaman Klaim Saya.
+                        </p>
+                    </div>
+                @endif
+
                 <form
                     method="POST"
                     action="{{ route('found-items.store') }}"
@@ -77,13 +88,14 @@
                         }
                     }">
                     @csrf
+                    <input type="hidden" name="lost_item_id" value="{{ old('lost_item_id', $linkedLostItem->id ?? '') }}">
 
                     <div>
                         <label for="item_name" class="text-sm font-bold text-primary-dark">
                             Nama Barang
                         </label>
                         <input id="item_name" name="item_name" type="text"
-                            value="{{ old('item_name') }}"
+                            value="{{ old('item_name', $linkedLostItem->item_name ?? '') }}"
                             placeholder="Contoh: Dompet Hitam, Kunci Motor, Laptop"
                             class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark placeholder:text-gray-400 focus:border-primary focus:ring-primary @error('item_name') border-red-400 @enderror">
                         @error('item_name')
@@ -100,7 +112,7 @@
                                 class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark focus:border-primary focus:ring-primary @error('category') border-red-400 @enderror">
                                 <option value="">Pilih Kategori</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category }}" @selected(old('category') === $category)>
+                                    <option value="{{ $category }}" @selected(old('category', $linkedLostItem->category ?? '') === $category)>
                                         {{ $category }}
                                     </option>
                                 @endforeach

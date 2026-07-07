@@ -168,7 +168,7 @@
                     <div class="flex flex-col gap-3 sm:flex-row">
 
                         {{-- Ajukan Klaim --}}
-                        <a href="#"
+                        <a href="{{ route('found-items.create', ['lost_item_id' => $lostItem->id]) }}"
                            id="btn-saya-menemukan"
                            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

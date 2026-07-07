@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FoundItem;
+use App\Models\LostItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -49,16 +50,24 @@ class FoundItemController extends Controller
         return view('found-items.show', compact('foundItem'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $linkedLostItem = null;
+
+        if ($request->filled('lost_item_id')) {
+            $linkedLostItem = LostItem::find($request->integer('lost_item_id'));
+        }
+
         return view('found-items.create', [
             'categories' => self::CATEGORIES,
+            'linkedLostItem' => $linkedLostItem,
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'lost_item_id' => ['nullable', 'integer', 'exists:lost_items,id'],
             'item_name' => ['required', 'string', 'max:120'],
             'category' => ['required', 'string', Rule::in(self::CATEGORIES)],
             'incident_date' => ['required', 'date', 'before_or_equal:today'],

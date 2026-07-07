@@ -39,7 +39,10 @@ class MyClaim extends Controller
 
     private function allItemsForUser()
     {
-        $realItems = LostItem::where('user_id', Auth::id())->latest()->get();
+        $realItems = LostItem::with('latestFoundReport')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         // pakai concat(), BUKAN merge(), supaya item asli tidak tertimpa dummy
         return collect($realItems)->concat($this->getDummyItems());
