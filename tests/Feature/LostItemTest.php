@@ -41,7 +41,7 @@ class LostItemTest extends TestCase
 
         $this->assertNotNull($lostItem);
         $this->assertSame('Dompet Hitam', $lostItem->item_name);
-        $this->assertSame('menunggu_verifikasi', $lostItem->status);
+        $this->assertSame('hilang', $lostItem->status);
 
         Storage::disk('public')->assertExists($lostItem->photo_path);
     }
