@@ -250,6 +250,7 @@
                                 data-user="{{ optional($claim->user)->name }}"
                                 data-email="{{ optional($claim->user)->email }}"
                                 data-message="{{ $claim->message }}"
+                                data-photo="{{ $claim->photo_path ? asset('storage/' . $claim->photo_path) : '' }}"
                                 data-status="{{ $claim->status }}">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -337,9 +338,9 @@
 {{-- Modal Detail Klaim --}}
 <div
     id="detailModal"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
 
-    <div class="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
+    <div class="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl max-h-[90vh] overflow-y-auto">
 
         <div class="mb-6 flex items-center justify-between">
 
@@ -419,9 +420,15 @@
 
                 <div
                     id="detailMessage"
-                    class="mt-2 rounded-xl bg-gray-100 p-4 text-gray-700">
+                    class="mt-2 rounded-xl bg-gray-100 p-4 text-gray-700 break-words whitespace-pre-wrap">
                 </div>
 
+            </div>
+
+            {{-- Foto Bukti --}}
+            <div class="col-span-2" id="detailPhotoWrapper" style="display:none">
+                <label class="text-sm text-gray-500">Foto Bukti</label>
+                <img id="detailPhoto" src="" alt="Foto bukti klaim" class="mt-2 w-full max-h-56 rounded-xl object-cover border border-gray-200">
             </div>
 
             <div class="col-span-2">
@@ -481,6 +488,17 @@
 
             document.getElementById('detailMessage').innerText =
                 this.dataset.message;
+
+            // Foto bukti
+            const photoUrl = this.dataset.photo;
+            const photoWrapper = document.getElementById('detailPhotoWrapper');
+            const photoImg = document.getElementById('detailPhoto');
+            if (photoUrl) {
+                photoImg.src = photoUrl;
+                photoWrapper.style.display = 'block';
+            } else {
+                photoWrapper.style.display = 'none';
+            }
 
             const status = button.dataset.status;
             const detailStatus = document.getElementById('detailStatus');

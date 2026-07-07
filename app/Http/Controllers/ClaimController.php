@@ -24,10 +24,13 @@ class ClaimController extends Controller
         // Validasi input
         $validated = $request->validate([
             'message' => ['required', 'string', 'min:20', 'max:1000'],
+            'photo'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ], [
             'message.required' => 'Pesan bukti kepemilikan wajib diisi.',
             'message.min'      => 'Pesan minimal 20 karakter.',
             'message.max'      => 'Pesan maksimal 1000 karakter.',
+            'photo.image'      => 'File harus berupa gambar.',
+            'photo.max'        => 'Ukuran foto maksimal 5 MB.',
         ]);
 
         // Cek apakah user sudah pernah klaim barang ini
@@ -40,11 +43,18 @@ class ClaimController extends Controller
                 ->with('error', 'Kamu sudah pernah mengajukan klaim untuk barang ini.');
         }
 
+        // Simpan foto bukti jika ada
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('claims', 'public');
+        }
+
         // Simpan klaim
         Claim::create([
             'user_id'       => Auth::id(),
             'found_item_id' => $foundItem->id,
             'message'       => $validated['message'],
+            'photo_path'    => $photoPath,
             'status'        => 'menunggu',
         ]);
 
@@ -81,10 +91,21 @@ class ClaimController extends Controller
             'status' => 'diterima',
         ]);
 
+<<<<<<< HEAD
         $claim->foundItem->update([
             'status' => 'dikembalikan',
             'dikembalikan_at' => now(),
         ]);
+=======
+        // Update status FoundItem menjadi 'dikembalikan' + set dikembalikan_at
+        $foundItem = $claim->foundItem;
+        if ($foundItem && $foundItem->status !== 'dikembalikan' && $foundItem->status !== 'selesai') {
+            $foundItem->update([
+                'status'          => 'dikembalikan',
+                'dikembalikan_at' => now(),
+            ]);
+        }
+>>>>>>> e7e662e7db1dc88a6e95973795cf25635a7c965b
 
         return back()->with('success', 'Klaim berhasil disetujui.');
     }
@@ -96,5 +117,28 @@ class ClaimController extends Controller
         ]);
 
         return back()->with('success', 'Klaim berhasil ditolak.');
+    }
+
+    /**
+     * Tandai FoundItem sebagai selesai (barang sudah dikembalikan ke pemilik).
+     * Dipanggil oleh pemilik laporan (user yang melaporkan).
+     */
+    public function markFoundItemReturned(FoundItem $foundItem)
+    {
+        // Pastikan hanya pemilik laporan yang bisa mengkonfirmasi
+        if (Auth::id() !== $foundItem->user_id) {
+            abort(403, 'Tidak diizinkan.');
+        }
+
+        if ($foundItem->status === 'dikembalikan') {
+            $foundItem->update([
+                'status'    => 'selesai',
+                'selesai_at'=> now(),
+            ]);
+        }
+
+        return redirect()
+            ->route('claims.ditemukan')
+            ->with('success', 'Barang telah dikonfirmasi dikembalikan. Status diperbarui ke Selesai.');
     }
 }

@@ -127,4 +127,28 @@ class LostItemController extends Controller
             ->route('admin.lost-items.index')
             ->with('success', 'Data berhasil dihapus.');
     }
+
+    /**
+     * Tandai barang hilang sebagai telah ditemukan.
+     * Dipanggil oleh pemilik laporan dari halaman "Klaim Saya".
+     */
+    public function markFound(LostItem $lostItem)
+    {
+        // Hanya pemilik laporan yang boleh
+        if (Auth::id() !== $lostItem->user_id) {
+            abort(403, 'Tidak diizinkan.');
+        }
+
+        if ($lostItem->status !== 'selesai') {
+            $lostItem->update([
+                'status'    => 'selesai',
+                'selesai_at'=> now(),
+            ]);
+        }
+
+        return redirect()
+            ->route('claims.laporan')
+            ->with('success', 'Status barang hilang diperbarui: Selesai – barang telah ditemukan!');
+    }
 }
+

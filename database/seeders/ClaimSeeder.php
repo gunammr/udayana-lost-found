@@ -18,10 +18,30 @@ class ClaimSeeder extends Seeder
             return;
         }
 
-        // Buat klaim untuk sebagian barang ditemukan
-        // Setiap barang maksimal diklaim oleh 1-2 user berbeda
-        $foundItems->random(min(10, $foundItems->count()))->each(function (FoundItem $item) use ($users) {
+        // 1. Pastikan setiap FoundItem dengan status 'dikembalikan' atau 'selesai'
+        //    memiliki tepat satu claim dengan status 'diterima' (data konsisten).
+        $itemsNeedingDiterimaClaim = $foundItems->whereIn('status', ['dikembalikan', 'selesai']);
+        foreach ($itemsNeedingDiterimaClaim as $item) {
+            $claimer = $users->where('id', '!=', $item->user_id)->random();
+            Claim::firstOrCreate(
+                [
+                    'user_id'       => $claimer->id,
+                    'found_item_id' => $item->id,
+                ],
+                [
+                    'message'    => $this->randomMessage(),
+                    'status'     => 'diterima',
+                    'admin_note' => null,
+                ]
+            );
+        }
 
+        // 2. Buat klaim tambahan untuk sebagian barang ditemukan lainnya
+        $remainingItems = $foundItems
+            ->whereNotIn('status', ['dikembalikan', 'selesai'])
+            ->random(min(8, $foundItems->whereNotIn('status', ['dikembalikan', 'selesai'])->count()));
+
+        foreach ($remainingItems as $item) {
             // Pilih 1 atau 2 user berbeda untuk mengajukan klaim
             $claimants = $users->random(min($this->fake()->numberBetween(1, 2), $users->count()));
 
@@ -38,7 +58,7 @@ class ClaimSeeder extends Seeder
                     ]
                 );
             }
-        });
+        }
     }
 
     private function randomMessage(): string
