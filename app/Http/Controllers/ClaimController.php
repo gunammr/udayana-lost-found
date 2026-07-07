@@ -91,12 +91,6 @@ class ClaimController extends Controller
             'status' => 'diterima',
         ]);
 
-<<<<<<< HEAD
-        $claim->foundItem->update([
-            'status' => 'dikembalikan',
-            'dikembalikan_at' => now(),
-        ]);
-=======
         // Update status FoundItem menjadi 'dikembalikan' + set dikembalikan_at
         $foundItem = $claim->foundItem;
         if ($foundItem && $foundItem->status !== 'dikembalikan' && $foundItem->status !== 'selesai') {
@@ -105,7 +99,6 @@ class ClaimController extends Controller
                 'dikembalikan_at' => now(),
             ]);
         }
->>>>>>> e7e662e7db1dc88a6e95973795cf25635a7c965b
 
         return back()->with('success', 'Klaim berhasil disetujui.');
     }
