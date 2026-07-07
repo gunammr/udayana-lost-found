@@ -20,4 +20,9 @@ class Category extends Model
     {
         return $this->hasMany(FoundItem::class);
     }
+
+    public function lostItems(): HasMany
+    {
+        return $this->hasMany(LostItem::class);
+    }
 }

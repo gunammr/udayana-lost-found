@@ -52,6 +52,17 @@
                     </div>
                 @endif
 
+                @if (!empty($linkedLostItem))
+                    <div class="mt-8 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-900">
+                        <p class="font-bold">
+                            Menanggapi laporan barang hilang: {{ $linkedLostItem->item_name }}
+                        </p>
+                        <p class="mt-1">
+                            Setelah laporan ini dikirim, pemilik bisa melihat informasi temuan dari halaman Klaim Saya.
+                        </p>
+                    </div>
+                @endif
+
                 <form
                     method="POST"
                     action="{{ route('found-items.store') }}"
@@ -77,13 +88,14 @@
                         }
                     }">
                     @csrf
+                    <input type="hidden" name="lost_item_id" value="{{ old('lost_item_id', $linkedLostItem->id ?? '') }}">
 
                     <div>
                         <label for="item_name" class="text-sm font-bold text-primary-dark">
                             Nama Barang
                         </label>
                         <input id="item_name" name="item_name" type="text"
-                            value="{{ old('item_name') }}"
+                            value="{{ old('item_name', $linkedLostItem->item_name ?? '') }}"
                             placeholder="Contoh: Dompet Hitam, Kunci Motor, Laptop"
                             class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark placeholder:text-gray-400 focus:border-primary focus:ring-primary @error('item_name') border-red-400 @enderror">
                         @error('item_name')
@@ -93,19 +105,23 @@
 
                     <div class="grid gap-5 md:grid-cols-2">
                         <div>
-                            <label for="category" class="text-sm font-bold text-primary-dark">
+                            @php
+                                $selectedCategoryId = old('category_id', $linkedLostItem->category_id ?? null);
+                                $selectedCategoryName = $linkedLostItem->category ?? null;
+                            @endphp
+                            <label for="category_id" class="text-sm font-bold text-primary-dark">
                                 Kategori
                             </label>
-                            <select id="category" name="category"
-                                class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark focus:border-primary focus:ring-primary @error('category') border-red-400 @enderror">
+                            <select id="category_id" name="category_id"
+                                class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark focus:border-primary focus:ring-primary @error('category_id') border-red-400 @enderror">
                                 <option value="">Pilih Kategori</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category }}" @selected(old('category') === $category)>
-                                        {{ $category }}
+                                    <option value="{{ $category->id }}" @selected((int) $selectedCategoryId === $category->id || (!$selectedCategoryId && $selectedCategoryName === $category->category))>
+                                        {{ $category->category }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('category')
+                            @error('category_id')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -178,14 +194,14 @@
                                 <span x-text="photoName || 'Klik untuk memilih file atau seret ke area ini'"></span>
                             </span>
                             <span class="mt-2 text-xs text-gray-500">
-                                Mendukung format PNG, JPG, JPEG hingga 10MB
+                                Mendukung format PNG, JPG, JPEG, WEBP hingga 10MB
                             </span>
                         </label>
                         <input
                             id="photo"
                             name="photo"
                             type="file"
-                            accept="image/png,image/jpeg"
+                            accept="image/png,image/jpeg,image/webp"
                             class="sr-only"
                             @change="updatePhoto">
                         @error('photo')

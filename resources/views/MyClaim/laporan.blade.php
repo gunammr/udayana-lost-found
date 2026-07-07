@@ -45,7 +45,8 @@
             <div class="flex flex-wrap gap-6">
                 @forelse ($items as $item)
                     @php
-                        $status  = $item->status ?? 'hilang';
+                        $foundReport = $item->latestFoundReport ?? null;
+                        $status  = $foundReport ? 'ditemukan' : ($item->status ?? 'hilang');
                         [$statusStyle, $statusLabel] = match($status) {
                             'hilang'    => ['bg-red-100 text-red-700',    'Hilang'],
                             'dicari'    => ['bg-amber-100 text-amber-700', 'Dicari'],
@@ -86,6 +87,11 @@
                                     <p class="mb-1 text-[10px] font-semibold uppercase tracking-wider text-red-400">Laporan Kehilangan</p>
                                     <h4 class="mb-2 text-lg font-bold text-gray-800">{{ $item->item_name }}</h4>
                                     <p class="text-sm text-gray-500 line-clamp-3">{{ Str::limit($item->description, 90) }}</p>
+                                    @if ($foundReport)
+                                        <div class="mt-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-800">
+                                            Ditemukan di {{ $foundReport->location }} oleh {{ $foundReport->reporter_name }}.
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="flex items-center justify-between pt-4 mt-4 text-xs text-gray-400 border-t border-gray-100">
                                     <span class="flex items-center gap-1">
@@ -176,6 +182,20 @@
                                             @endif
                                         </div>
                                     </div>
+
+                                    @if ($foundReport)
+                                        <div class="rounded-2xl border border-blue-100 bg-blue-50 p-5 mb-6">
+                                            <p class="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-2">Info Barang Ditemukan</p>
+                                            <p class="text-sm font-bold text-gray-800">{{ $foundReport->item_name }}</p>
+                                            <p class="mt-2 text-sm text-gray-600">{{ $foundReport->description }}</p>
+                                            <div class="mt-4 grid gap-2 text-xs text-gray-600 sm:grid-cols-2">
+                                                <p><span class="font-bold text-gray-700">Lokasi:</span> {{ $foundReport->location }}</p>
+                                                <p><span class="font-bold text-gray-700">Penemu:</span> {{ $foundReport->reporter_name }}</p>
+                                                <p><span class="font-bold text-gray-700">Kontak:</span> {{ $foundReport->phone }}</p>
+                                                <p><span class="font-bold text-gray-700">Tanggal:</span> {{ \Carbon\Carbon::parse($foundReport->incident_date)->translatedFormat('d M Y') }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     {{-- Riwayat Status dengan timestamp --}}
                                     <h3 class="mb-4 text-sm font-bold text-gray-800">Riwayat Status</h3>

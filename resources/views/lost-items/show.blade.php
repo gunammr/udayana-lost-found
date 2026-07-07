@@ -11,6 +11,11 @@
         <div class="pointer-events-none absolute bottom-10 left-10 h-60 w-60 rounded-full bg-red-100/15 blur-3xl"></div>
 
         <div class="relative mx-auto max-w-7xl px-6">
+            @if (session('success'))
+                <div class="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-800">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             {{-- ================================================
                  BREADCRUMB
@@ -168,7 +173,7 @@
                     <div class="flex flex-col gap-3 sm:flex-row">
 
                         {{-- Ajukan Klaim --}}
-                        <a href="#"
+                        <a href="{{ route('found-items.create', ['lost_item_id' => $lostItem->id]) }}"
                            id="btn-saya-menemukan"
                            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

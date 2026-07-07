@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\LostItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,13 +10,15 @@ use Illuminate\Validation\Rule;
 
 class LostItemController extends Controller
 {
-    private const CATEGORIES = [
-        'Elektronik',
-        'Dokumen',
-        'Aksesori',
-        'Kunci',
-        'Lainnya',
-    ];
+    private function categoryNames(): array
+    {
+        return Category::orderBy('category')->pluck('category')->all();
+    }
+
+    private function categoryOptions()
+    {
+        return Category::orderBy('category')->get();
+    }
 
     public function index(Request $request)
     {
@@ -38,7 +41,7 @@ class LostItemController extends Controller
 
         return view('lost-items.index', [
             'lostItems' => $lostItems,
-            'categories' => self::CATEGORIES,
+            'categories' => $this->categoryNames(),
             'search'     => $request->input('search', ''),
             'activeCategory' => $request->input('category', 'Semua'),
         ]);
@@ -52,7 +55,7 @@ class LostItemController extends Controller
     public function create()
     {
         return view('lost-items.create', [
-            'categories' => self::CATEGORIES,
+            'categories' => $this->categoryOptions(),
         ]);
     }
 
@@ -60,19 +63,25 @@ class LostItemController extends Controller
     {
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:120'],
-            'category' => ['required', 'string', Rule::in(self::CATEGORIES)],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
             'incident_date' => ['required', 'date', 'before_or_equal:today'],
             'location' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string', 'max:1000'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
             'reporter_name' => ['required', 'string', 'max:120'],
             'phone' => ['required', 'string', 'max:30'],
+        ], [
+            'photo.uploaded' => 'Foto gagal diunggah. Pastikan ukuran file tidak melebihi batas upload PHP/Herd.',
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Foto harus berformat JPG, JPEG, PNG, atau WEBP.',
+            'photo.max' => 'Ukuran foto maksimal 10 MB.',
         ]);
 
         if ($request->hasFile('photo')) {
             $validated['photo_path'] = $request->file('photo')->store('lost-items', 'public');
         }
 
+        $validated['category'] = Category::findOrFail($validated['category_id'])->category;
         $validated['user_id'] = Auth::id();
         $validated['status'] = 'hilang';
 
@@ -96,7 +105,7 @@ class LostItemController extends Controller
     {
         return view('admin.lost-items.edit', [
             'lostItem' => $lostItem,
-            'categories' => self::CATEGORIES,
+            'categories' => $this->categoryNames(),
         ]);
     }
 
@@ -104,13 +113,15 @@ class LostItemController extends Controller
     {
         $validated = $request->validate([
             'item_name' => 'required|max:120',
-            'category' => ['required', Rule::in(self::CATEGORIES)],
+            'category' => ['required', Rule::exists('categories', 'category')],
             'incident_date' => 'required|date',
             'location' => 'required|max:180',
             'description' => 'required',
             'reporter_name' => 'required|max:120',
             'phone' => 'required|max:30',
         ]);
+
+        $validated['category_id'] = Category::where('category', $validated['category'])->value('id');
 
         $result = $lostItem->update($validated);
 
@@ -151,4 +162,3 @@ class LostItemController extends Controller
             ->with('success', 'Status barang hilang diperbarui: Selesai – barang telah ditemukan!');
     }
 }
-

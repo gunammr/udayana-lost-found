@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\FoundItem;
+use App\Models\LostItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class FoundItemController extends Controller
 {
-    private const CATEGORIES = [
-        'Elektronik',
-        'Dokumen',
-        'Aksesori',
-        'Kunci',
-        'Lainnya',
-    ];
+    private function categoryNames(): array
+    {
+        return Category::orderBy('category')->pluck('category')->all();
+    }
+
+    private function categoryOptions()
+    {
+        return Category::orderBy('category')->get();
+    }
 
     public function index(Request $request)
     {
@@ -38,7 +42,7 @@ class FoundItemController extends Controller
 
         return view('found-items.index', [
             'foundItems' => $foundItems,
-            'categories' => self::CATEGORIES,
+            'categories' => $this->categoryNames(),
             'search'     => $request->input('search', ''),
             'activeCategory' => $request->input('category', 'Semua'),
         ]);
@@ -49,34 +53,54 @@ class FoundItemController extends Controller
         return view('found-items.show', compact('foundItem'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $linkedLostItem = null;
+
+        if ($request->filled('lost_item_id')) {
+            $linkedLostItem = LostItem::find($request->integer('lost_item_id'));
+        }
+
         return view('found-items.create', [
-            'categories' => self::CATEGORIES,
+            'categories' => $this->categoryOptions(),
+            'linkedLostItem' => $linkedLostItem,
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'lost_item_id' => ['nullable', 'integer', 'exists:lost_items,id'],
             'item_name' => ['required', 'string', 'max:120'],
-            'category' => ['required', 'string', Rule::in(self::CATEGORIES)],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
             'incident_date' => ['required', 'date', 'before_or_equal:today'],
             'location' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string', 'max:1000'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20240'],
             'reporter_name' => ['required', 'string', 'max:120'],
             'phone' => ['required', 'string', 'max:30'],
+        ], [
+            'photo.uploaded' => 'Foto gagal diunggah. Pastikan ukuran file tidak melebihi 10 MB.',
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Foto harus berformat JPG, JPEG, PNG, atau WEBP.',
+            'photo.max' => 'Ukuran foto maksimal 10 MB.',
         ]);
 
         if ($request->hasFile('photo')) {
             $validated['photo_path'] = $request->file('photo')->store('found-items', 'public');
         }
 
+        $validated['category'] = Category::findOrFail($validated['category_id'])->category;
         $validated['user_id'] = Auth::id();
         $validated['status'] = 'ditemukan';
 
-        FoundItem::create($validated);
+        $foundItem = FoundItem::create($validated);
+
+        if ($foundItem->lost_item_id) {
+            return redirect()
+                ->route('lost-items.show', $foundItem->lost_item_id)
+                ->with('success', 'Laporan barang ditemukan berhasil dikirim. Pemilik bisa melihat informasi temuan ini.');
+        }
 
         return redirect()
             ->route('found-items.create')
@@ -94,7 +118,7 @@ public function edit(FoundItem $foundItem)
 {
     return view('admin.found-item.edit', [
         'foundItem' => $foundItem,
-        'categories' => self::CATEGORIES,
+        'categories' => $this->categoryNames(),
     ]);
 }
 
@@ -102,13 +126,15 @@ public function update(Request $request, FoundItem $foundItem)
 {
     $validated = $request->validate([
         'item_name' => 'required|max:120',
-        'category' => ['required', Rule::in(self::CATEGORIES)],
+        'category' => ['required', Rule::exists('categories', 'category')],
         'found_date' => 'required|date',
         'location' => 'required|max:180',
         'description' => 'required',
         'finder_name' => 'required|max:120',
         'phone' => 'required|max:30',
     ]);
+
+    $validated['category_id'] = Category::where('category', $validated['category'])->value('id');
 
     if ($request->hasFile('photo')) {
         $validated['photo_path'] = $request->file('photo')->store('found-items', 'public');
