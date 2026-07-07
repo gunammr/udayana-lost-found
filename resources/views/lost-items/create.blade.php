@@ -90,19 +90,19 @@
 
                     <div class="grid gap-5 md:grid-cols-2">
                         <div>
-                            <label for="category" class="text-sm font-bold text-primary-dark">
+                            <label for="category_id" class="text-sm font-bold text-primary-dark">
                                 Kategori
                             </label>
-                            <select id="category" name="category"
-                                class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark focus:border-primary focus:ring-primary @error('category') border-red-400 @enderror">
+                            <select id="category_id" name="category_id"
+                                class="mt-2 w-full border-gray-300 bg-white text-sm text-primary-dark focus:border-primary focus:ring-primary @error('category_id') border-red-400 @enderror">
                                 <option value="">Pilih Kategori</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category }}" @selected(old('category') === $category)>
-                                        {{ $category }}
+                                    <option value="{{ $category->id }}" @selected((int) old('category_id') === $category->id)>
+                                        {{ $category->category }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('category')
+                            @error('category_id')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -176,10 +176,10 @@
                                 <span x-text="photoName || 'Klik untuk memilih file atau seret ke area ini'"></span>
                             </span>
                             <span class="mt-2 text-xs text-gray-500">
-                                Mendukung format PNG, JPG, JPEG hingga 10MB
+                                Mendukung format PNG, JPG, JPEG, WEBP hingga 10MB
                             </span>
                         </label>
-                        <input id="photo" name="photo" type="file" accept="image/png,image/jpeg" class="sr-only"
+                        <input id="photo" name="photo" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only"
                             @change="updatePhoto">
                         @error('photo')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

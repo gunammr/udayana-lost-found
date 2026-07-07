@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 #[Fillable([
     'user_id',
+    'category_id',
     'lost_item_id',
     'item_name',
     'category',
@@ -54,6 +55,15 @@ class FoundItem extends Model
     public function claims(): HasMany
     {
         return $this->hasMany(Claim::class);
+    }
+
+    /** Klaim yang sudah diterima/disetujui oleh admin */
+    public function acceptedClaim(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        // Prioritaskan klaim dengan status 'diterima', fallback ke klaim terbaru
+        return $this->hasOne(Claim::class)
+            ->orderByRaw("CASE status WHEN 'diterima' THEN 1 WHEN 'menunggu' THEN 2 WHEN 'ditolak' THEN 3 ELSE 4 END")
+            ->latest('updated_at');
     }
 
     public function categoryData(): BelongsTo

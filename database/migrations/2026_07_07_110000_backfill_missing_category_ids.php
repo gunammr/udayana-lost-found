@@ -1,24 +1,12 @@
 <?php
 
-namespace Database\Seeders;
-
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class CategorySeeder extends Seeder
+return new class extends Migration
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function up(): void
     {
-        foreach (['Elektronik', 'Dokumen', 'Aksesori', 'Kunci', 'Lainnya'] as $category) {
-            DB::table('categories')->updateOrInsert(
-                ['category' => $category],
-                ['updated_at' => now(), 'created_at' => now()]
-            );
-        }
-
         DB::statement("
             UPDATE lost_items
             SET category_id = (
@@ -35,4 +23,9 @@ class CategorySeeder extends Seeder
             WHERE category_id IS NULL
         ");
     }
-}
+
+    public function down(): void
+    {
+        //
+    }
+};

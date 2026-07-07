@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 #[Fillable([
     'user_id',
+    'category_id',
     'item_name',
     'category',
     'incident_date',
@@ -44,6 +45,11 @@ class LostItem extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function categoryData(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function foundReports(): HasMany

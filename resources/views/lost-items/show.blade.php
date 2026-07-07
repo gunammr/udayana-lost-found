@@ -11,6 +11,11 @@
         <div class="pointer-events-none absolute bottom-10 left-10 h-60 w-60 rounded-full bg-red-100/15 blur-3xl"></div>
 
         <div class="relative mx-auto max-w-7xl px-6">
+            @if (session('success'))
+                <div class="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-800">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             {{-- ================================================
                  BREADCRUMB

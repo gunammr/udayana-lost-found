@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,10 +53,12 @@ class LostItemFactory extends Factory
         $item        = $this->faker->randomElement(self::ITEMS);
         $photoSeed   = $this->faker->numberBetween(200, 400);
         $incidentDate = $this->faker->dateTimeBetween('-6 months', 'now');
+        $category = Category::where('category', $item[1])->first();
 
         return [
             'item_name'     => $item[0],
-            'category'      => $item[1],
+            'category'    => $item[1],
+            'category_id' => $category?->id,
             'incident_date' => $incidentDate,
             'location'      => $this->faker->randomElement(self::LOCATIONS),
             'description'   => $item[2],
@@ -89,8 +92,8 @@ class LostItemFactory extends Factory
     public function dicari(): static
     {
         return $this->state(function (array $attrs) {
-            $base = $attrs['created_at'] ?? now()->subDays(rand(3, 30));
-            $dicariAt = $this->faker->dateTimeBetween($base, '+2 hours');
+            $base = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(3, 30)));
+            $dicariAt = (clone $base)->addHours(rand(1, 48));
             return [
                 'status'      => 'dicari',
                 'dicari_at'   => $dicariAt,
@@ -104,9 +107,9 @@ class LostItemFactory extends Factory
     public function ditemukan(): static
     {
         return $this->state(function (array $attrs) {
-            $base     = $attrs['created_at'] ?? now()->subDays(rand(5, 60));
-            $dicariAt    = $this->faker->dateTimeBetween($base, '+3 hours');
-            $ditemukanAt = $this->faker->dateTimeBetween($dicariAt, '+2 days');
+            $base     = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(5, 60)));
+            $dicariAt    = (clone $base)->addHours(rand(1, 48));
+            $ditemukanAt = (clone $dicariAt)->addDays(rand(1, 5));
             return [
                 'status'      => 'ditemukan',
                 'dicari_at'   => $dicariAt,
@@ -120,10 +123,10 @@ class LostItemFactory extends Factory
     public function selesai(): static
     {
         return $this->state(function (array $attrs) {
-            $base     = $attrs['created_at'] ?? now()->subDays(rand(10, 90));
-            $dicariAt    = $this->faker->dateTimeBetween($base, '+3 hours');
-            $ditemukanAt = $this->faker->dateTimeBetween($dicariAt, '+2 days');
-            $selesaiAt   = $this->faker->dateTimeBetween($ditemukanAt, '+5 days');
+            $base     = \Carbon\Carbon::parse($attrs['created_at'] ?? now()->subDays(rand(10, 90)));
+            $dicariAt    = (clone $base)->addHours(rand(1, 48));
+            $ditemukanAt = (clone $dicariAt)->addDays(rand(1, 5));
+            $selesaiAt   = (clone $ditemukanAt)->addDays(rand(1, 7));
             return [
                 'status'      => 'selesai',
                 'dicari_at'   => $dicariAt,

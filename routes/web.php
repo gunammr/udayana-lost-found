@@ -71,6 +71,14 @@ Route::middleware(['auth'])->group(function () {
     // Ajukan klaim barang ditemukan
     Route::post('/barang-ditemukan/{foundItem}/klaim', [ClaimController::class, 'store'])
         ->name('claims.store');
+
+    // Tandai barang hilang sebagai telah ditemukan (oleh pemilik laporan)
+    Route::patch('/klaim-saya/laporan/{lostItem}/ditemukan', [LostItemController::class, 'markFound'])
+        ->name('my.lost-items.mark-found');
+
+    // Tandai barang ditemukan sebagai selesai/dikembalikan (oleh pelapor)
+    Route::patch('/klaim-saya/ditemukan/{foundItem}/selesai', [ClaimController::class, 'markFoundItemReturned'])
+        ->name('my.found-items.mark-returned');
     
     Route::get('/profile', [ProfileController::class, 'editCustom'])
         ->name('profile.edit');
@@ -111,6 +119,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/kategori', [CategoryController::class, 'index'])
         ->name('admin.categories.index');
+    
+    Route::get('/admin/kategori/{category}', [CategoryController::class, 'show'])
+        ->name('admin.categories.show');
+
+    Route::post('/admin/kategori', [CategoryController::class, 'store'])
+        ->name('admin.categories.store');
+
+    Route::put( '/admin/kategori/{category}', [CategoryController::class, 'update'])
+        ->name('admin.categories.update');
+
+    Route::delete(
+    '/admin/kategori/{category}', [CategoryController::class, 'destroy'])
+        ->name('admin.categories.destroy');
     
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
