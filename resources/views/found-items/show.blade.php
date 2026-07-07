@@ -182,9 +182,13 @@
                         <div class="mt-3 flex items-center gap-4">
 
                             {{-- Avatar --}}
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-                                {{ mb_strtoupper(mb_substr($foundItem->reporter_name, 0, 1)) }}
-                            </div>
+                            @if ($foundItem->user && $foundItem->user->avatar_path)
+                                <img src="{{ asset('storage/' . $foundItem->user->avatar_path) }}" class="object-cover w-12 h-12 border border-primary/20 rounded-full">
+                            @else
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+                                    {{ mb_strtoupper(mb_substr($foundItem->reporter_name, 0, 1)) }}
+                                </div>
+                            @endif
 
                             <div>
                                 <p class="font-semibold text-primary-dark">{{ $foundItem->reporter_name }}</p>
@@ -213,9 +217,13 @@
                                     Informasi Pengeklaim
                                 </h2>
                                 <div class="flex items-center gap-3">
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-200 font-bold text-emerald-700">
-                                        {{ mb_strtoupper(mb_substr($acceptedClaim->user->name, 0, 1)) }}
-                                    </div>
+                                    @if ($acceptedClaim->user->avatar_path)
+                                        <img src="{{ asset('storage/' . $acceptedClaim->user->avatar_path) }}" class="object-cover w-10 h-10 border border-emerald-200 rounded-full">
+                                    @else
+                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-200 font-bold text-emerald-700">
+                                            {{ mb_strtoupper(mb_substr($acceptedClaim->user->name, 0, 1)) }}
+                                        </div>
+                                    @endif
                                     <div>
                                         <p class="font-semibold text-emerald-800">{{ $acceptedClaim->user->name }}</p>
                                         @if ($acceptedClaim->user->phone)

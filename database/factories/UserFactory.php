@@ -58,6 +58,12 @@ class UserFactory extends Factory
 
         return [
             'name'             => $this->faker->name(),
+            'avatar_path'      => $this->faker->boolean(60) 
+                ? 'imagesdemo/' . $this->faker->randomElement([
+                    'profilefemale1.png', 'profilefemale2.png', 
+                    'profilemale1.png', 'profilemale2.png'
+                ]) 
+                : null,
             'email'            => $this->faker->unique()->safeEmail(),
             'email_verified_at'=> now(),
             'password'         => static::$password ??= Hash::make('password'),

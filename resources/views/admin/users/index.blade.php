@@ -78,7 +78,7 @@
 
 </div>
 
-<div class="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-lg">
+<div class="overflow-x-auto rounded-3xl border border-gray-100 bg-white shadow-lg">
 
     <table class="w-full">
 
@@ -124,11 +124,13 @@
 
                         <div class="flex items-center gap-4">
 
-                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
-
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-
-                            </div>
+                            @if ($user->avatar_path)
+                                <img src="{{ asset('storage/' . $user->avatar_path) }}" class="object-cover w-12 h-12 border border-blue-200 rounded-full">
+                            @else
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
 
                             <div>
 

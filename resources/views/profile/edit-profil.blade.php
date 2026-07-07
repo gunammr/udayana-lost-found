@@ -30,8 +30,13 @@
         <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
             <h3 class="mb-4 text-sm font-bold text-gray-800">Foto Profil</h3>
             <div class="flex items-center gap-5">
-                <img src="{{ $user->avatar_path ? asset('storage/' . $user->avatar_path) : asset('images/default-avatar.png') }}"
-                     class="object-cover w-16 h-16 border rounded-full">
+                @if ($user->avatar_path)
+                    <img src="{{ asset('storage/' . $user->avatar_path) }}" class="object-cover w-16 h-16 border rounded-full">
+                @else
+                    <div class="flex items-center justify-center w-16 h-16 text-xl font-bold text-blue-700 bg-blue-100 border rounded-full">
+                        {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
+                    </div>
+                @endif
                 <div>
                     <p class="text-sm font-semibold text-gray-700">Ubah foto profil</p>
                     <p class="mb-2 text-xs text-gray-400">Format JPG, PNG. Ukuran maksimal 2MB.</p>

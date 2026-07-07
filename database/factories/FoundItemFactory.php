@@ -66,7 +66,12 @@ class FoundItemFactory extends Factory
             'incident_date'  => $this->faker->dateTimeBetween('-6 months', 'now'),
             'location'       => $this->faker->randomElement(self::LOCATIONS),
             'description'    => $item[2],
-            'photo_path'     => "https://picsum.photos/seed/{$photoSeed}/800/600",
+            'photo_path'     => 'imagesdemo/' . $this->faker->randomElement([
+                'airpods.png', 'catatankuliah.png', 'chargerlaptop.png',
+                'dompetcoklat.png', 'dompetmerah.png', 'handphone.png',
+                'jamtangan.png', 'kacamatahitam.png', 'ktm.png',
+                'kuncikamar.png', 'lenovothinkpad.png'
+            ]),
             'reporter_name'  => $this->faker->randomElement(['Anonim', 'Anonim', $this->faker->name()]),
             'phone'          => $this->faker->numerify('08##########'),
             // Default: baru ditemukan, belum diklaim
