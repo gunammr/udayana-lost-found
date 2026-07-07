@@ -133,22 +133,28 @@
                 {{-- Status --}}
                 <td class="px-6 py-6 text-center">
 
-                    @if($item->status == 'belum_diklaim')
+                    @if($item->status == 'ditemukan')
 
                          <span class="inline-flex items-center whitespace-nowrap px-4 py-2 rounded-full bg-red-100 text-red-600 font-semibold text-sm">
-                            Belum Diklaim
+                            Ditemukan
                         </span>
 
-                    @elseif($item->status == 'proses_klaim')
+                    @elseif($item->status == 'dikembalikan')
 
                         <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-                            Proses Klaim
+                            Dikembalikan
                         </span>
 
-                    @elseif($item->status == 'sudah_dikembalikan')
+                    @elseif($item->status == 'diklaim')
 
                         <span class="inline-flex px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
-                            Sudah Dikembalikan
+                            Diklaim
+                        </span>
+                    
+                    @elseif($item->status == 'selesai')
+
+                        <span class="inline-flex px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
+                            Selesai
                         </span>
 
                     @else
