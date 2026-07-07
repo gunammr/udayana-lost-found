@@ -2,66 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 use App\Models\LostItem;
 use App\Models\FoundItem;
 
 class CategoryController extends Controller
 {
     public function index()
+{
+    $categories = Category::all()->map(function ($category) {
+
+        $category->count =
+            LostItem::where('category_id', $category->id)->count()
+            +
+            FoundItem::where('category_id', $category->id)->count();
+
+        return $category;
+    });
+
+    return view('admin.categories.index', compact('categories'));
+    }
+
+        public function show(Category $category)
+        {
+        $foundItems = FoundItem::where('category_id', $category->id)
+            ->latest()
+            ->get();
+
+        $lostItems = LostItem::where('category_id', $category->id)
+            ->latest()
+            ->get();
+
+        return view(
+            'admin.categories.show',
+            compact('category', 'foundItems', 'lostItems')
+        );
+    }
+
+    public function store(Request $request)
     {
-        $categories = collect([
-            [
-                'name' => 'Elektronik',
-                'icon' => '💻',
-                'description' => 'Laptop, HP, charger, kabel data, dll',
-            ],
-            [
-                'name' => 'Aksesori',
-                'icon' => '👜',
-                'description' => 'Dompet, jam tangan, kacamata',
-            ],
-            [
-                'name' => 'Dokumen',
-                'icon' => '📄',
-                'description' => 'KTM, KTP, SIM, sertifikat',
-            ],
-            [
-                'name' => 'Tas',
-                'icon' => '🎒',
-                'description' => 'Ransel, selempang, totebag',
-            ],
-            [
-                'name' => 'Kunci',
-                'icon' => '🔑',
-                'description' => 'Kunci motor, rumah, gembok',
-            ],
-            [
-                'name' => 'Pakaian',
-                'icon' => '👕',
-                'description' => 'Jaket, topi, sepatu',
-            ],
-            [
-                'name' => 'Buku & ATK',
-                'icon' => '📚',
-                'description' => 'Buku, alat tulis',
-            ],
-            [
-                'name' => 'Lainnya',
-                'icon' => '📦',
-                'description' => 'Kategori lainnya',
-            ],
+        $validated = $request->validate([
+            'category' => 'required|string|max:100|unique:categories,category',
+        ], [
+            'category.required' => 'Nama kategori wajib diisi.',
+            'category.unique' => 'Kategori sudah ada.',
         ]);
 
-        $categories = $categories->map(function ($category) {
+        Category::create([
+            'category' => $validated['category'],
+        ]);
 
-            $category['count'] =
-                LostItem::where('category', $category['name'])->count()
-                +
-                FoundItem::where('category', $category['name'])->count();
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Kategori berhasil ditambahkan.');
+    }
 
-            return $category;
-        });
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'category' => 'required|string|max:100|unique:categories,category,' . $category->id,
+        ]);
 
-        return view('admin.categories.index', compact('categories'));
+        $category->update([
+            'category' => $validated['category'],
+        ]);
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Kategori berhasil diperbarui.');
+    }
+
+    public function destroy(Category $category)
+    {
+        $used =
+            FoundItem::where('category_id', $category->id)->exists()
+            ||
+            LostItem::where('category_id', $category->id)->exists();
+
+        if ($used) {
+            return back()->with(
+                'error',
+                'Kategori tidak dapat dihapus karena masih digunakan.'
+            );
+        }
+
+        $category->delete();
+
+        return back()->with(
+            'success',
+            'Kategori berhasil dihapus.'
+        );
     }
 }
