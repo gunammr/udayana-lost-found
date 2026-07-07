@@ -62,17 +62,20 @@
                             </span>
 
                             <span class="text-xs text-gray-400 font-medium">
-                                2 Jam lalu
+                                {{ $latestLostItem?->created_at?->diffForHumans() ?? '-' }}
                             </span>
 
                         </div>
 
                         <h3 class="mt-5 text-2xl font-bold text-slate-800">
-                            Kunci Motor Honda
+                            {{ $latestLostItem->item_name ?? 'Belum ada laporan' }}
                         </h3>
 
                         <p class="text-base text-gray-500 mt-2 flex items-center gap-1">
-                            📍 <span class="font-medium">Parkiran FEB</span>
+                            📍
+                            <span class="font-medium">
+                                {{ $latestLostItem->location ?? '-' }}
+                            </span>
                         </p>
 
                     </div>
@@ -83,11 +86,12 @@
                             class="bg-white rounded-2xl shadow-xl p-6 text-center border border-gray-100/50 flex flex-col justify-center items-center min-h-[160px]">
 
                             <div class="w-12 h-12 rounded-full bg-warning flex items-center justify-center shadow-sm">
-                                <img src="{{ asset('images/Sukses.png') }}" alt="Icon Berhasil" class="w-6 h-6 object-contain">
+                                <img src="{{ asset('images/Sukses.png') }}" alt="Icon Berhasil"
+                                    class="w-6 h-6 object-contain">
                             </div>
 
                             <h2 class="mt-4 text-3xl font-bold text-slate-800">
-                                45+
+                                {{ $returnedItemsCount }}
                             </h2>
 
                             <p class="mt-1 text-sm text-body font-medium leading-tight">
@@ -106,7 +110,7 @@
                             </div>
 
                             <h3 class="mt-auto text-xl font-bold text-slate-800 leading-snug">
-                                Dompet Hitam
+                                {{ $latestFoundItem->item_name ?? 'Belum ada laporan' }}
                             </h3>
 
                         </div>
