@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Status alur: hilang → dicari → ditemukan → selesai
+ */
 #[Fillable([
     'user_id',
     'item_name',
@@ -18,16 +21,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'reporter_name',
     'phone',
     'status',
+    'dicari_at',
+    'ditemukan_at',
+    'selesai_at',
 ])]
 class LostItem extends Model
 {
-    /** @use HasFactory<\Database\Factories\LostItemFactory> */
     use HasFactory;
 
     protected function casts(): array
     {
         return [
             'incident_date' => 'date',
+            'dicari_at'     => 'datetime',
+            'ditemukan_at'  => 'datetime',
+            'selesai_at'    => 'datetime',
         ];
     }
 

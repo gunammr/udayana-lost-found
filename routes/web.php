@@ -61,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/klaim-saya/laporan', [MyClaim::class, 'laporan'])
         ->name('claims.laporan');
+
+    Route::get('/klaim-saya/ditemukan', [MyClaim::class, 'ditemukan'])
+        ->name('claims.ditemukan');
         
     Route::get('/klaim-saya/status', [MyClaim::class, 'status'])
         ->name('claims.status');
