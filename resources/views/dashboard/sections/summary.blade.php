@@ -14,7 +14,7 @@
 
             <x-dashboard-summary-card
                 title="Laporan Ditemukan"
-                value="0"
+                value="{{ $foundItemsCount ?? 0 }}"
                 subtitle="Menunggu klaim"
                 icon="images/Ditemukan.png"
                 iconBg="bg-warning"
@@ -22,7 +22,7 @@
 
             <x-dashboard-summary-card
                 title="Klaim Berhasil"
-                value="0"
+                value="{{ $claimsCount ?? 0 }}"
                 subtitle="Barang telah kembali"
                 icon="images/Berhasil.png"
                 iconBg="bg-blue-100"
