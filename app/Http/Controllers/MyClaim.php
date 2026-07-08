@@ -90,7 +90,7 @@ class MyClaim extends Controller
         $allItems = $this->allItemsForUser();
         $counts = $this->getCounts($allItems);
 
-        return view('myclaim.semua_aktivitas', array_merge(['items' => $allItems], $counts));
+        return view('MyClaim.semua_aktivitas', array_merge(['items' => $allItems], $counts));
     }
 
     public function laporan()
@@ -99,7 +99,7 @@ class MyClaim extends Controller
         $laporan  = $allItems->where('item_type', 'lost')->values();
         $counts = $this->getCounts($allItems);
 
-        return view('myclaim.laporan', array_merge(['items' => $laporan], $counts));
+        return view('MyClaim.laporan', array_merge(['items' => $laporan], $counts));
     }
 
     public function ditemukan()
@@ -108,7 +108,7 @@ class MyClaim extends Controller
         $ditemukan = $allItems->where('item_type', 'found')->values();
         $counts = $this->getCounts($allItems);
 
-        return view('myclaim.ditemukan', array_merge(['items' => $ditemukan], $counts));
+        return view('MyClaim.ditemukan', array_merge(['items' => $ditemukan], $counts));
     }
 
     public function status()
@@ -117,6 +117,6 @@ class MyClaim extends Controller
         $klaim    = $allItems->where('item_type', 'claim')->values();
         $counts = $this->getCounts($allItems);
 
-        return view('myclaim.klaim', array_merge(['items' => $klaim], $counts));
+        return view('MyClaim.klaim', array_merge(['items' => $klaim], $counts));
     }
 }

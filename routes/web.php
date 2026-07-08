@@ -31,11 +31,13 @@ Route::get('/barang-hilang/{lostItem}', [LostItemController::class, 'show'])
 Route::get('/barang-ditemukan', [FoundItemController::class, 'index'])
     ->name('found-items.index');
 
-Route::get('/barang-ditemukan/lapor', [FoundItemController::class, 'create'])
-    ->name('found-items.create');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/barang-ditemukan/lapor', [FoundItemController::class, 'create'])
+        ->name('found-items.create');
 
-Route::post('/barang-ditemukan', [FoundItemController::class, 'store'])
-    ->name('found-items.store');
+    Route::post('/barang-ditemukan', [FoundItemController::class, 'store'])
+        ->name('found-items.store');
+});
 
 Route::get('/barang-ditemukan/{foundItem}', [FoundItemController::class, 'show'])
     ->name('found-items.show');
