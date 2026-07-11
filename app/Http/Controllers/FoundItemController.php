@@ -99,6 +99,20 @@ class FoundItemController extends Controller
         $foundItem = FoundItem::create($validated);
 
         if ($foundItem->lost_item_id) {
+            $lostItem = LostItem::find($foundItem->lost_item_id);
+            if ($lostItem && in_array($lostItem->status, ['hilang', 'dicari'])) {
+                $lostItem->update([
+                    'status' => 'ditemukan',
+                    'ditemukan_at' => now(),
+                ]);
+            }
+
+            // Set status FoundItem menjadi dikembalikan karena pemilik sudah diketahui
+            $foundItem->update([
+                'status' => 'dikembalikan',
+                'dikembalikan_at' => now(),
+            ]);
+
             return redirect()
                 ->route('lost-items.show', $foundItem->lost_item_id)
                 ->with('success', 'Laporan barang ditemukan berhasil dikirim. Pemilik bisa melihat informasi temuan ini.');
@@ -156,5 +170,31 @@ public function update(Request $request, FoundItem $foundItem)
         return redirect()
             ->route('admin.found-items.index')
             ->with('success', 'Data berhasil dihapus.');
+    }
+
+    public function adminUpdateStatus(Request $request, FoundItem $foundItem)
+    {
+        $request->validate([
+            'status' => 'required|in:ditemukan,diklaim,dikembalikan,selesai',
+        ]);
+
+        $foundItem->update([
+            'status' => $request->status,
+        ]);
+
+        // If the foundItem is linked to a lost item and marked as selesai/dikembalikan,
+        // we might also want to update the lostItem if needed, but since it's admin forcing status,
+        // we can just update the found item for now.
+        if ($request->status === 'selesai' && $foundItem->lost_item_id) {
+            $lostItem = \App\Models\LostItem::find($foundItem->lost_item_id);
+            if ($lostItem && $lostItem->status !== 'selesai') {
+                $lostItem->update([
+                    'status' => 'selesai',
+                    'selesai_at' => now(),
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Status barang ditemukan berhasil diperbarui.');
     }
 }

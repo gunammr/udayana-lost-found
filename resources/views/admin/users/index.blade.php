@@ -84,29 +84,29 @@
 
         <thead class="bg-gray-50">
 
-            <tr class="text-xs uppercase tracking-wider text-gray-500">
+            <tr class="text-xs uppercase tracking-wider text-gray-500 bg-gray-50">
 
-                <th class="px-8 py-5 text-left">
+                <th class="px-4 py-3 text-left">
                     User
                 </th>
 
-                <th class="px-6 py-5 text-left">
+                <th class="px-4 py-3 text-left">
                     NIM
                 </th>
 
-                <th class="px-6 py-5 text-left">
+                <th class="px-4 py-3 text-left">
                     Fakultas
                 </th>
 
-                <th class="px-6 py-5 text-left">
+                <th class="px-4 py-3 text-left">
                     Role
                 </th>
 
-                <th class="px-6 py-5 text-left">
+                <th class="px-4 py-3 text-left">
                     Bergabung
                 </th>
 
-                <th class="px-6 py-5 text-center">
+                <th class="px-4 py-3 text-center">
                     Aksi
                 </th>
 
@@ -120,27 +120,27 @@
 
                 <tr class="border-t hover:bg-blue-50 transition">
 
-                    <td class="px-8 py-6">
+                    <td class="px-4 py-3">
 
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-3">
 
                             @if ($user->avatar_path)
-                                <img src="{{ asset('storage/' . $user->avatar_path) }}" class="object-cover w-12 h-12 border border-blue-200 rounded-full">
+                                <img src="{{ asset('storage/' . $user->avatar_path) }}" class="object-cover w-10 h-10 border border-blue-200 rounded-full">
                             @else
-                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700 text-sm">
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
                             @endif
 
                             <div>
 
-                                <p class="font-semibold text-gray-800">
+                                <p class="font-semibold text-gray-800 text-sm">
 
                                     {{ $user->name }}
 
                                 </p>
 
-                                <p class="text-sm text-gray-500">
+                                <p class="text-xs text-gray-500">
 
                                     {{ $user->email }}
 
@@ -152,23 +152,23 @@
 
                     </td>
 
-                    <td class="px-6 py-6">
+                    <td class="px-4 py-3 text-sm text-gray-700">
 
                         {{ $user->nim }}
 
                     </td>
 
-                    <td class="px-6 py-6">
+                    <td class="px-4 py-3 text-sm text-gray-700">
 
                         {{ $user->fakultas }}
 
                     </td>
 
-                    <td class="px-6 py-6">
+                    <td class="px-4 py-3">
 
                         @if($user->role == 'admin')
 
-                            <span class="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+                            <span class="rounded bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
 
                                 Admin
 
@@ -176,7 +176,7 @@
 
                         @else
 
-                            <span class="rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
+                            <span class="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
 
                                 User
 
@@ -186,7 +186,7 @@
 
                     </td>
 
-                    <td class="px-6 py-6">
+                    <td class="px-4 py-3 text-sm text-gray-700">
 
                         {{ $user->created_at->format('d M Y') }}
 
@@ -198,8 +198,7 @@
 
                             <button
                                 type="button"
-                                class="editUserBtn flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 hover:bg-blue-100"
-
+                                class="editUserBtn flex h-8 w-8 items-center justify-center rounded bg-blue-50 hover:bg-blue-100 transition"
                                 data-id="{{ $user->id }}"
                                 data-name="{{ $user->name }}"
                                 data-email="{{ $user->email }}"
@@ -210,31 +209,42 @@
                                 data-phone="{{ $user->phone }}"
                                 data-role="{{ $user->role }}">
 
-                                <img
-                                    src="{{ asset('images/icons/edit.svg') }}"
-                                    class="w-5">
+                                <img src="{{ asset('images/icons/edit.svg') }}" class="w-4">
 
                             </button>
 
-                            <form
-                                action="{{ route('admin.users.destroy', $user) }}"
-                                method="POST"
-                                onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                            @if(Auth::id() != $user->id)
 
-                                @csrf
-                                @method('DELETE')
+                                <form
+                                    action="{{ route('admin.users.destroy', $user) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        type="submit"
+                                        class="flex h-8 w-8 items-center justify-center rounded bg-red-50 hover:bg-red-100 transition">
+
+                                        <img src="{{ asset('images/icons/delete.svg') }}" class="w-4">
+
+                                    </button>
+
+                                </form>
+
+                            @else
 
                                 <button
-                                    type="submit"
-                                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 hover:bg-red-100">
+                                    type="button"
+                                    class="flex h-8 w-8 items-center justify-center rounded bg-gray-50 opacity-50 cursor-not-allowed transition"
+                                    title="Anda tidak bisa menghapus akun Anda sendiri">
 
-                                    <img
-                                        src="{{ asset('images/icons/delete.svg') }}"
-                                        class="w-5">
+                                    <img src="{{ asset('images/icons/delete.svg') }}" class="w-4">
 
                                 </button>
 
-                            </form>
+                            @endif
 
                         </div>
 

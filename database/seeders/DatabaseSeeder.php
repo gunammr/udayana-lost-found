@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         // Buat akun uji utama
         User::factory()->create([
             'name'          => 'Admin User',
-            'email'         => 'admin@example.com',
+            'email'         => 'admin@example.net',
             'nim'           => '2301010001',
             'tahun_angkatan'=> '2023',
             'program_studi' => 'Teknik Informatika',
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name'          => 'Test User',
-            'email'         => 'user@example.com',
+            'email'         => 'user@example.net',
             'nim'           => '2301010001',
             'tahun_angkatan'=> '2024',
             'program_studi' => 'Teknik Informatika',

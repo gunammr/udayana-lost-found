@@ -35,16 +35,16 @@
         {{-- Header --}}
         <thead class="bg-gray-50">
 
-            <tr class="text-gray-500 uppercase text-xs tracking-wider">
+            <tr class="text-gray-500 uppercase text-xs tracking-wider bg-gray-50">
 
-                <th class="px-8 py-5 text-left">ID Item</th>
-                <th class="px-8 py-5 text-left">Detail Barang</th>
-                <th class="px-6 py-5 text-left">Kategori</th>
-                <th class="px-6 py-5 text-left">Lokasi</th>
-                <th class="px-6 py-5 text-left">Tanggal</th>
-                <th class="px-6 py-5 text-left">Pelapor</th>
-                <th class="px-6 py-5 text-center">Status</th>
-                <th class="px-6 py-5 text-center">Aksi</th>
+                <th class="px-4 py-3 text-left">ID Item</th>
+                <th class="px-4 py-3 text-left">Detail Barang</th>
+                <th class="px-4 py-3 text-left">Kategori</th>
+                <th class="px-4 py-3 text-left">Lokasi</th>
+                <th class="px-4 py-3 text-left">Tanggal</th>
+                <th class="px-4 py-3 text-left">Pelapor</th>
+                <th class="px-4 py-3 text-center">Status</th>
+                <th class="px-4 py-3 text-center">Aksi</th>
 
             </tr>
 
@@ -54,20 +54,30 @@
 
         @forelse($lostItems as $item)
 
-            <tr class="border-t hover:bg-blue-50 transition duration-200">
-
+            <tr class="border-t hover:bg-blue-50 transition duration-200" x-data="{
+                    status: '{{ $item->status }}',
+                    showFoundModal: false,
+                    updateStatus(newStatus) {
+                        if (newStatus === 'ditemukan') {
+                            this.showFoundModal = true;
+                            this.status = '{{ $item->status }}'; // revert visual state
+                        } else {
+                            this.$refs.statusForm.submit();
+                        }
+                    }
+                }">
                 {{-- ID --}}
-                <td class="px-8 py-6 text-gray-500 font-medium">
+                <td class="px-4 py-3 text-gray-500 font-medium text-sm">
 
                     #ITM-{{ str_pad($item->id,3,'0',STR_PAD_LEFT) }}
 
                 </td>
 
                 {{-- Detail --}}
-                <td class="px-8 py-6">
-
+                <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
                         <div
-                            class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shadow-sm">
+                            class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shadow-sm flex-shrink-0">
 
                             @if($item->photo_path)
 
@@ -81,7 +91,7 @@
 
                                 <img
                                 src="{{ asset('images/icons/image.svg') }}"
-                                class="w-6">
+                                class="w-5">
 
                             </div>
 
@@ -89,106 +99,135 @@
 
                         </div>
 
-                    <div>
-
-                        <p class="font-semibold text-gray-800">
-
-                        {{ $item->item_name }}
-
+                        <div>
+                            <p class="font-semibold text-gray-800 text-sm">
+                                {{ $item->item_name }}
                             </p>
+                            <p class="text-xs text-gray-500">
+                                {{ Str::limit($item->description, 35) }}
+                            </p>
+                        </div>
+                    </div>
+                </td>
 
-                            <p class="text-sm text-gray-500">
+                {{-- Kategori --}}
+                <td class="px-4 py-3">
+                    <span class="inline-flex px-2 py-1 rounded border bg-gray-50 text-gray-600 text-[10px] font-semibold tracking-wide">
+                        {{ $item->category }}
+                    </span>
+                </td>
 
-                                {{ Str::limit($item->description,45) }}
+                {{-- Lokasi --}}
+                <td class="px-4 py-3 text-gray-700 text-sm">
+                    <div class="truncate max-w-[150px]" title="{{ $item->location }}">{{ $item->location }}</div>
+                </td>
 
-                        </p>
+                {{-- Tanggal --}}
+                <td class="px-4 py-3 text-gray-700 text-sm whitespace-nowrap">
+                    {{ \Carbon\Carbon::parse($item->incident_date)->format('d M Y') }}
+                </td>
 
+                {{-- Pelapor --}}
+                <td class="px-4 py-3 text-gray-700 text-sm">
+                    {{ $item->reporter_name }}
+                </td>
+
+                {{-- Status --}}
+                <td class="px-4 py-3 text-center">
+
+                    <form x-ref="statusForm" action="{{ route('admin.lost-items.status', $item->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <select name="status" x-model="status" @change="updateStatus($event.target.value)"
+                            class="px-2 py-1 rounded-lg border-gray-200 text-xs font-semibold focus:ring-primary focus:border-primary cursor-pointer outline-none shadow-sm"
+                            :class="{
+                                'bg-red-50 text-red-700': status === 'hilang',
+                                'bg-yellow-50 text-yellow-700': status === 'dicari',
+                                'bg-blue-50 text-blue-700': status === 'ditemukan',
+                                'bg-green-50 text-green-700': status === 'selesai'
+                            }">
+                            <option value="hilang">Hilang</option>
+                            <option value="dicari">Dicari</option>
+                            <option value="ditemukan">Ditemukan</option>
+                            <option value="selesai">Selesai</option>
+                        </select>
+                    </form>
+
+                    {{-- Found Modal --}}
+                    <div x-show="showFoundModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                            
+                            <div x-show="showFoundModal" x-transition.opacity class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-50 backdrop-blur-sm" aria-hidden="true" @click="showFoundModal = false"></div>
+                            
+                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                            
+                            <div x-show="showFoundModal" x-transition class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 text-gray-800">
+                                
+                                <h3 class="text-xl font-bold text-gray-900 mb-4 text-left">Laporkan Penemuan Barang</h3>
+                                
+                                <form action="{{ route('admin.lost-items.mark-found', $item->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-left">
+                                    @csrf
+                                    <div>
+                                        <label class="block text-sm font-bold mb-1">Nama Barang Ditemukan</label>
+                                        <input type="text" name="item_name" value="{{ $item->item_name }}" required class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold mb-1">Kategori</label>
+                                        <input type="text" name="category" value="{{ $item->category }}" required class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold mb-1">Lokasi Ditemukan</label>
+                                        <input type="text" name="location" required class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold mb-1">Tanggal Ditemukan</label>
+                                        <input type="date" name="incident_date" required class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold mb-1">Deskripsi Tambahan</label>
+                                        <textarea name="description" required rows="2" class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2"></textarea>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-bold mb-1">Nama Penemu</label>
+                                            <input type="text" name="reporter_name" required class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold mb-1">No. HP (WA)</label>
+                                            <input type="text" name="phone" required class="w-full rounded-lg border-gray-200 text-sm focus:ring-primary focus:border-primary bg-gray-50 px-3 py-2">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold mb-1">Foto Barang (Opsional)</label>
+                                        <input type="file" name="photo" accept="image/*" class="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 bg-gray-50 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    
+                                    <div class="mt-6 sm:flex sm:flex-row-reverse gap-2">
+                                        <button type="submit" class="inline-flex justify-center w-full px-5 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 sm:w-auto">
+                                            Simpan & Tandai
+                                        </button>
+                                        <button type="button" @click="showFoundModal = false" class="inline-flex justify-center w-full px-5 py-2.5 mt-3 text-sm font-bold text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 sm:mt-0 sm:w-auto">
+                                            Batal
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
 
                 </td>
 
-                {{-- Kategori --}}
-                <td class="px-6 py-6">
-
-                    <span class="inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
-
-                        {{ $item->category }}
-
-                    </span>
-
-                </td>
-
-                {{-- Lokasi --}}
-                <td class="px-6 py-6 text-gray-700">
-
-                    {{ $item->location }}
-
-                </td>
-
-                {{-- Tanggal --}}
-                <td class="px-6 py-6 text-gray-700">
-
-                    {{ \Carbon\Carbon::parse($item->incident_date)->format('d M Y') }}
-
-                </td>
-
-                {{-- Pelapor --}}
-                <td class="px-6 py-6 text-gray-700">
-
-                    {{ $item->reporter_name }}
-
-                </td>
-
-                {{-- Status --}}
-                <td class="px-6 py-6 text-center">
-
-                    @if($item->status == 'hilang')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-red-100 text-red-600 font-semibold text-sm">
-
-                            Hilang
-
-                        </span>
-
-                    @elseif($item->status == 'dicari')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
-
-                            Dicari
-
-                        </span>
-
-                    @elseif($item->status == 'ditemukan')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-
-                            Ditemukan
-
-                        </span>
-
-                    @else
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
-
-                            Selesai
-
-                        </span>
-
-                    @endif
-
-                </td>
-
                 {{-- Aksi --}}
-                <td class="px-6 py-6">
+                <td class="px-4 py-3">
 
-                    <div class="flex justify-center gap-3">
+                    <div class="flex justify-center gap-2">
 
                         <a href="{{ route('admin.lost-items.edit', $item->id) }}"
-                           class="w-10 h-10 rounded-xl bg-blue-50 hover:bg-blue-100 flex items-center justify-center">
+                           class="w-8 h-8 rounded bg-blue-50 hover:bg-blue-100 flex items-center justify-center">
 
                             <img
                                 src="{{ asset('images/icons/edit.svg') }}"
-                                class="w-5">
+                                class="w-4">
 
                         </a>
 
@@ -202,11 +241,11 @@
 
                             <button
                                 type="submit"
-                                class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-100 transition flex items-center justify-center">
+                                class="w-8 h-8 rounded bg-red-50 hover:bg-red-100 transition flex items-center justify-center">
 
                                 <img
                                     src="{{ asset('images/icons/delete.svg') }}"
-                                    class="w-5">
+                                    class="w-4">
 
                             </button>
 

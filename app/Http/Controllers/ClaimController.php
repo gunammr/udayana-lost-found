@@ -10,12 +10,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ClaimController extends Controller
 {
-    /**
-     * Simpan klaim baru dari user yang sudah login.
-     */
     public function store(Request $request, FoundItem $foundItem)
     {
-        // Pastikan sudah login
         if (! Auth::check()) {
             return redirect()->route('login')
                 ->with('info', 'Silakan masuk terlebih dahulu untuk mengajukan klaim.');
@@ -43,13 +39,11 @@ class ClaimController extends Controller
                 ->with('error', 'Kamu sudah pernah mengajukan klaim untuk barang ini.');
         }
 
-        // Simpan foto bukti jika ada
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('claims', 'public');
         }
 
-        // Simpan klaim
         Claim::create([
             'user_id'       => Auth::id(),
             'found_item_id' => $foundItem->id,
@@ -91,7 +85,6 @@ class ClaimController extends Controller
             'status' => 'diterima',
         ]);
 
-        // Update status FoundItem menjadi 'dikembalikan' + set dikembalikan_at
         $foundItem = $claim->foundItem;
         if ($foundItem && $foundItem->status !== 'dikembalikan' && $foundItem->status !== 'selesai') {
             $foundItem->update([
@@ -112,13 +105,9 @@ class ClaimController extends Controller
         return back()->with('success', 'Klaim berhasil ditolak.');
     }
 
-    /**
-     * Tandai FoundItem sebagai selesai (barang sudah dikembalikan ke pemilik).
-     * Dipanggil oleh pemilik laporan (user yang melaporkan).
-     */
+  
     public function markFoundItemReturned(FoundItem $foundItem)
     {
-        // Pastikan hanya pemilik laporan yang bisa mengkonfirmasi
         if (Auth::id() !== $foundItem->user_id) {
             abort(403, 'Tidak diizinkan.');
         }
@@ -128,6 +117,16 @@ class ClaimController extends Controller
                 'status'    => 'selesai',
                 'selesai_at'=> now(),
             ]);
+            
+            if ($foundItem->lost_item_id) {
+                $lostItem = \App\Models\LostItem::find($foundItem->lost_item_id);
+                if ($lostItem && $lostItem->status !== 'selesai') {
+                    $lostItem->update([
+                        'status' => 'selesai',
+                        'selesai_at' => now(),
+                    ]);
+                }
+            }
         }
 
         return redirect()

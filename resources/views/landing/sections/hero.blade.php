@@ -53,7 +53,10 @@
 
                 <div class="relative space-y-5">
 
-                    <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100/50">
+                    @if($latestLostItem)
+                        <a href="{{ route('lost-items.show', $latestLostItem->id) }}" class="block group">
+                    @endif
+                    <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100/50 transition duration-300 @if($latestLostItem) group-hover:-translate-y-1 group-hover:shadow-2xl @endif">
 
                         <div class="flex justify-between items-center">
 
@@ -67,7 +70,7 @@
 
                         </div>
 
-                        <h3 class="mt-5 text-2xl font-bold text-slate-800">
+                        <h3 class="mt-5 text-2xl font-bold text-slate-800 @if($latestLostItem) group-hover:text-primary transition @endif">
                             {{ $latestLostItem->item_name ?? 'Belum ada laporan' }}
                         </h3>
 
@@ -79,29 +82,37 @@
                         </p>
 
                     </div>
+                    @if($latestLostItem)
+                        </a>
+                    @endif
 
                     <div class="grid grid-cols-2 gap-5">
 
-                        <div
-                            class="bg-white rounded-2xl shadow-xl p-6 text-center border border-gray-100/50 flex flex-col justify-center items-center min-h-[160px]">
+                        <a href="{{ route('found-items.index') }}" class="block group">
+                            <div
+                                class="bg-white rounded-2xl shadow-xl p-6 text-center border border-gray-100/50 flex flex-col justify-center items-center min-h-[160px] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl">
 
-                            <div class="w-12 h-12 rounded-full bg-warning flex items-center justify-center shadow-sm">
-                                <img src="{{ asset('images/Sukses.png') }}" alt="Icon Berhasil"
-                                    class="w-6 h-6 object-contain">
+                                <div class="w-12 h-12 rounded-full bg-warning flex items-center justify-center shadow-sm">
+                                    <img src="{{ asset('images/Sukses.png') }}" alt="Icon Berhasil"
+                                        class="w-6 h-6 object-contain">
+                                </div>
+
+                                <h2 class="mt-4 text-3xl font-bold text-slate-800 group-hover:text-primary transition">
+                                    {{ $returnedItemsCount }}
+                                </h2>
+
+                                <p class="mt-1 text-sm text-body font-medium leading-tight">
+                                    Barang Dikembalikan
+                                </p>
+
                             </div>
+                        </a>
 
-                            <h2 class="mt-4 text-3xl font-bold text-slate-800">
-                                {{ $returnedItemsCount }}
-                            </h2>
-
-                            <p class="mt-1 text-sm text-body font-medium leading-tight">
-                                Barang Dikembalikan
-                            </p>
-
-                        </div>
-
+                        @if($latestFoundItem)
+                            <a href="{{ route('found-items.show', $latestFoundItem->id) }}" class="block group">
+                        @endif
                         <div
-                            class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100/50 flex flex-col justify-between min-h-[160px]">
+                            class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100/50 flex flex-col justify-between min-h-[160px] transition duration-300 @if($latestFoundItem) group-hover:-translate-y-1 group-hover:shadow-2xl @endif">
 
                             <div>
                                 <span class="bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -109,11 +120,14 @@
                                 </span>
                             </div>
 
-                            <h3 class="mt-auto text-xl font-bold text-slate-800 leading-snug">
+                            <h3 class="mt-auto text-xl font-bold text-slate-800 leading-snug @if($latestFoundItem) group-hover:text-primary transition @endif">
                                 {{ $latestFoundItem->item_name ?? 'Belum ada laporan' }}
                             </h3>
 
                         </div>
+                        @if($latestFoundItem)
+                            </a>
+                        @endif
 
                     </div>
 

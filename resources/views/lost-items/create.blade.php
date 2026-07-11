@@ -29,7 +29,6 @@
                         Barang Hilang
                     </a>
 
-                    {{-- {{ route('found-items.create') ntar sesuaiin nama routenya --}}
                     <a href="{{ route('found-items.create') }}"
                         class="rounded-md px-4 py-2 text-body transition hover:bg-gray-50 hover:text-primary">
                         Barang Ditemukan

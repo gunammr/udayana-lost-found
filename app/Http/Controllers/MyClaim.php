@@ -28,7 +28,7 @@ class MyClaim extends Controller
 
         // Laporan barang ditemukan yang dibuat user ini
         $foundItems = FoundItem::where('user_id', Auth::id())
-            ->with(['acceptedClaim.user'])
+            ->with(['acceptedClaim.user', 'lostItem.user'])
             ->latest()
             ->get()
             ->map(fn ($item) => (object) array_merge($item->toArray(), [
@@ -45,6 +45,13 @@ class MyClaim extends Controller
                         'message'    => $item->acceptedClaim->message,
                         'photo_path' => $item->acceptedClaim->photo_path,
                         'avatar_path'=> $item->acceptedClaim->user->avatar_path,
+                    ]
+                    : null,
+                'linked_lost_item_owner' => $item->lostItem?->user
+                    ? (object)[
+                        'name'       => $item->lostItem->user->name,
+                        'phone'      => $item->lostItem->user->phone,
+                        'avatar_path'=> $item->lostItem->user->avatar_path,
                     ]
                     : null,
             ]));

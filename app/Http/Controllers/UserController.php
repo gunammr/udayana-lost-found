@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Menampilkan daftar user
-     */
+    // daftar user
     public function index()
     {
         $users = User::latest()->paginate(10);
@@ -29,17 +27,13 @@ class UserController extends Controller
         ));
     }
 
-    /**
-     * Form tambah user
-     */
+    // form tambah user
     public function create()
     {
         return view('admin.users.create');
     }
 
-    /**
-     * Simpan user
-     */
+   // simpan user baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -63,17 +57,13 @@ class UserController extends Controller
             ->with('success', 'User berhasil ditambahkan.');
     }
 
-    /**
-     * Form edit
-     */
+    //form edit
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
 
-    /**
-     * Update user
-     */
+    // update user
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
@@ -98,9 +88,8 @@ class UserController extends Controller
             ->with('success', 'User berhasil diperbarui.');
     }
 
-    /**
-     * Hapus user
-     */
+   
+    // hapus user
     public function destroy(User $user)
     {
         $user->delete();

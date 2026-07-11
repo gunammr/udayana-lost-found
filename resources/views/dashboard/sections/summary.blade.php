@@ -10,7 +10,8 @@
                 subtitle="Sedang diproses"
                 icon="images/search.png"
                 iconBg="bg-red-100"
-                valueColor="text-red-600"/>
+                valueColor="text-red-600"
+                href="{{ route('claims.laporan') }}"/>
 
             <x-dashboard-summary-card
                 title="Laporan Ditemukan"
@@ -18,7 +19,8 @@
                 subtitle="Menunggu klaim"
                 icon="images/Ditemukan.png"
                 iconBg="bg-warning"
-                valueColor="text-yellow-700"/>
+                valueColor="text-yellow-700"
+                href="{{ route('claims.ditemukan') }}"/>
 
             <x-dashboard-summary-card
                 title="Klaim Berhasil"
@@ -26,7 +28,8 @@
                 subtitle="Barang telah kembali"
                 icon="images/Berhasil.png"
                 iconBg="bg-blue-100"
-                valueColor="text-primary"/>
+                valueColor="text-primary"
+                href="{{ route('claims.status') }}"/>
 
         </div>
 

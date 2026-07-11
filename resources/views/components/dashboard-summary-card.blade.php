@@ -6,7 +6,12 @@
     'iconBg' => 'bg-blue-100',
     'iconColor' => 'text-primary',
     'valueColor' => 'text-primary',
+    'href' => null,
 ])
+
+@if($href)
+    <a href="{{ $href }}" class="block">
+@endif
 
 <div class="bg-white rounded-3xl shadow-card p-7 hover:-translate-y-1 transition duration-300">
 
@@ -59,3 +64,7 @@
     </div>
 
 </div>
+
+@if($href)
+    </a>
+@endif
