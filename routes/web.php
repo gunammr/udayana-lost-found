@@ -107,6 +107,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/barang-hilang/{lostItem}', [LostItemController::class, 'destroy'])
         ->name('admin.lost-items.destroy');
 
+    Route::patch('/admin/barang-hilang/{lostItem}/status', [LostItemController::class, 'adminUpdateStatus'])
+        ->name('admin.lost-items.status');
+
+    Route::post('/admin/barang-hilang/{lostItem}/mark-found', [LostItemController::class, 'adminMarkFound'])
+        ->name('admin.lost-items.mark-found');
+
     Route::get('/admin/barang-ditemukan', [FoundItemController::class, 'adminIndex'])
         ->name('admin.found-items.index');
 
@@ -118,6 +124,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/admin/barang-ditemukan/{foundItem}', [FoundItemController::class, 'destroy'])
         ->name('admin.found-items.destroy');
+
+    Route::patch('/admin/barang-ditemukan/{foundItem}/status', [FoundItemController::class, 'adminUpdateStatus'])
+        ->name('admin.found-items.status');
 
     Route::get('/admin/kategori', [CategoryController::class, 'index'])
         ->name('admin.categories.index');

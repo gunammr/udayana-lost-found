@@ -331,58 +331,91 @@
                                     </div>
                                     {{-- end riwayat status --}}
 
-                                    {{-- Info pengeklaim jika status dikembalikan atau selesai --}}
-                                    @if ($itemType === 'found' && in_array($status, ['dikembalikan', 'selesai']) && !empty($item->accepted_claimer))
-                                        @php $claimer = $item->accepted_claimer; @endphp
-                                        <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 space-y-4">
-                                            <h3 class="flex items-center gap-2 text-sm font-bold text-emerald-700">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                </svg>
-                                                Informasi Pengeklaim
-                                            </h3>
+                                    {{-- Info pengeklaim / pemilik jika status dikembalikan atau selesai --}}
+                                    @if ($itemType === 'found' && in_array($status, ['dikembalikan', 'selesai']))
+                                        @if (!empty($item->accepted_claimer))
+                                            @php $claimer = $item->accepted_claimer; @endphp
+                                            <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 space-y-4">
+                                                <h3 class="flex items-center gap-2 text-sm font-bold text-emerald-700">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                    Informasi Pengeklaim
+                                                </h3>
 
-                                            {{-- Nama & Kontak --}}
-                                            <div class="flex items-center gap-4">
-                                                @if(isset($claimer->avatar_path) && $claimer->avatar_path)
-                                                    <img src="{{ asset('storage/' . $claimer->avatar_path) }}" class="object-cover w-12 h-12 border border-emerald-200 rounded-full">
-                                                @else
-                                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-lg font-bold text-emerald-700">
-                                                        {{ mb_strtoupper(mb_substr($claimer->name, 0, 1)) }}
+                                                {{-- Nama & Kontak --}}
+                                                <div class="flex items-center gap-4">
+                                                    @if(isset($claimer->avatar_path) && $claimer->avatar_path)
+                                                        <img src="{{ asset('storage/' . $claimer->avatar_path) }}" class="object-cover w-12 h-12 border border-emerald-200 rounded-full">
+                                                    @else
+                                                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-lg font-bold text-emerald-700">
+                                                            {{ mb_strtoupper(mb_substr($claimer->name, 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                    <div>
+                                                        <p class="font-semibold text-emerald-800">{{ $claimer->name }}</p>
+                                                        @if (!empty($claimer->phone))
+                                                            <a href="tel:{{ $claimer->phone }}" class="mt-0.5 flex items-center gap-1 text-xs text-emerald-600 hover:underline">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                                </svg>
+                                                                {{ $claimer->phone }}
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                {{-- Pesan Bukti Kepemilikan --}}
+                                                @if (!empty($claimer->message))
+                                                    <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                                                        <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Bukti Kepemilikan</p>
+                                                        <p class="text-sm leading-relaxed text-gray-700 break-words">{{ $claimer->message }}</p>
                                                     </div>
                                                 @endif
-                                                <div>
-                                                    <p class="font-semibold text-emerald-800">{{ $claimer->name }}</p>
-                                                    @if (!empty($claimer->phone))
-                                                        <a href="tel:{{ $claimer->phone }}" class="mt-0.5 flex items-center gap-1 text-xs text-emerald-600 hover:underline">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                                            </svg>
-                                                            {{ $claimer->phone }}
-                                                        </a>
+
+
+                                                {{-- Foto Bukti --}}
+                                                @if (!empty($claimer->photo_path))
+                                                    <div>
+                                                        <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Foto Bukti</p>
+                                                        <img src="{{ Str::startsWith($claimer->photo_path, ['http://', 'https://']) ? $claimer->photo_path : asset('storage/' . $claimer->photo_path) }}"
+                                                             alt="Foto bukti klaim"
+                                                             class="w-full aspect-square rounded-xl object-contain bg-emerald-50 border border-emerald-100">
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @elseif (!empty($item->linked_lost_item_owner))
+                                            @php $owner = $item->linked_lost_item_owner; @endphp
+                                            <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 space-y-4">
+                                                <h3 class="flex items-center gap-2 text-sm font-bold text-emerald-700">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                    Informasi Pemilik Barang
+                                                </h3>
+
+                                                <div class="flex items-center gap-4">
+                                                    @if(isset($owner->avatar_path) && $owner->avatar_path)
+                                                        <img src="{{ asset('storage/' . $owner->avatar_path) }}" class="object-cover w-12 h-12 border border-emerald-200 rounded-full">
+                                                    @else
+                                                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-lg font-bold text-emerald-700">
+                                                            {{ mb_strtoupper(mb_substr($owner->name, 0, 1)) }}
+                                                        </div>
                                                     @endif
+                                                    <div>
+                                                        <p class="font-semibold text-emerald-800">{{ $owner->name }}</p>
+                                                        @if (!empty($owner->phone))
+                                                            <a href="tel:{{ $owner->phone }}" class="mt-0.5 flex items-center gap-1 text-xs text-emerald-600 hover:underline">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                                </svg>
+                                                                {{ $owner->phone }}
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            {{-- Pesan Bukti Kepemilikan --}}
-                                            @if (!empty($claimer->message))
-                                                <div class="rounded-xl border border-emerald-100 bg-white p-4">
-                                                    <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Bukti Kepemilikan</p>
-                                                    <p class="text-sm leading-relaxed text-gray-700 break-words">{{ $claimer->message }}</p>
-                                                </div>
-                                            @endif
-
-
-                                            {{-- Foto Bukti --}}
-                                            @if (!empty($claimer->photo_path))
-                                                <div>
-                                                    <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Foto Bukti</p>
-                                                    <img src="{{ Str::startsWith($claimer->photo_path, ['http://', 'https://']) ? $claimer->photo_path : asset('storage/' . $claimer->photo_path) }}"
-                                                         alt="Foto bukti klaim"
-                                                         class="w-full aspect-square rounded-xl object-contain bg-emerald-50 border border-emerald-100">
-                                                </div>
-                                            @endif
-                                        </div>
+                                        @endif
                                     @endif
 
 

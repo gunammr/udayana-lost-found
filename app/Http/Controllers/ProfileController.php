@@ -12,6 +12,9 @@ class ProfileController extends Controller
     /**
      * Menampilkan form edit profil kustom.
      */
+
+
+
     public function editCustom(Request $request)
     {
         return view('profile.edit-profil', [
@@ -19,9 +22,14 @@ class ProfileController extends Controller
         ]);
     }
 
+
+
     /**
      * Memperbarui data profil kustom ke database.
      */
+
+
+
     public function updateCustom(Request $request): RedirectResponse
     {
         $request->validate([
@@ -36,7 +44,6 @@ class ProfileController extends Controller
             'avatar'         => ['nullable', 'image', 'max:2048'],
         ]);
 
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $data = $request->only([
@@ -56,9 +63,15 @@ class ProfileController extends Controller
         return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
+
+
     /**
      * Menghapus akun user.
      */
+
+
+
+
     public function destroy(Request $request): RedirectResponse
     {
         Auth::user()->delete();

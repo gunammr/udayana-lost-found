@@ -23,16 +23,16 @@
 
         <thead class="bg-gray-50">
 
-            <tr class="text-gray-500 uppercase text-xs tracking-wider">
+            <tr class="text-gray-500 uppercase text-xs tracking-wider bg-gray-50">
 
-                <th class="px-8 py-5 text-left">ID Item</th>
-                <th class="px-8 py-5 text-left">Detail Barang</th>
-                <th class="px-6 py-5 text-left">Kategori</th>
-                <th class="px-6 py-5 text-left">Lokasi</th>
-                <th class="px-6 py-5 text-left">Tanggal</th>
-                <th class="px-6 py-5 text-left">Pelapor</th>
-                <th class="px-6 py-5 text-center">Status</th>
-                <th class="px-6 py-5 text-center">Aksi</th>
+                <th class="px-4 py-3 text-left">ID Item</th>
+                <th class="px-4 py-3 text-left">Detail Barang</th>
+                <th class="px-4 py-3 text-left">Kategori</th>
+                <th class="px-4 py-3 text-left">Lokasi</th>
+                <th class="px-4 py-3 text-left">Tanggal</th>
+                <th class="px-4 py-3 text-left">Pelapor</th>
+                <th class="px-4 py-3 text-center">Status</th>
+                <th class="px-4 py-3 text-center">Aksi</th>
 
             </tr>
 
@@ -42,21 +42,21 @@
 
         @forelse($foundItems as $item)
 
-            <tr class="border-t hover:bg-blue-50 transition duration-200">
+            <tr class="border-t hover:bg-blue-50 transition duration-200" x-data="{
+                    status: '{{ $item->status }}'
+                }">
 
                 {{-- ID --}}
-                <td class="px-8 py-6 text-gray-500 font-medium">
+                <td class="px-4 py-3 text-gray-500 font-medium text-sm">
 
                     #FND-{{ str_pad($item->id,3,'0',STR_PAD_LEFT) }}
 
                 </td>
 
                 {{-- Detail Barang --}}
-                <td class="px-8 py-6">
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shadow-sm flex-shrink-0">
+                <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shadow-sm flex-shrink-0">
 
                             @if($item->photo_path)
 
@@ -67,11 +67,9 @@
                             @else
 
                                 <div class="w-full h-full flex items-center justify-center">
-
                                     <img
                                         src="{{ asset('images/icons/image.svg') }}"
-                                        class="w-6">
-
+                                        class="w-5">
                                 </div>
 
                             @endif
@@ -79,106 +77,71 @@
                         </div>
 
                         <div>
-
-                            <p class="font-semibold text-gray-800">
-
+                            <p class="font-semibold text-gray-800 text-sm">
                                 {{ $item->item_name }}
-
                             </p>
-
-                            <p class="text-sm text-gray-500">
-
-                                {{ Str::limit($item->description,45) }}
-
+                            <p class="text-xs text-gray-500">
+                                {{ Str::limit($item->description, 35) }}
                             </p>
-
                         </div>
-
                     </div>
-
                 </td>
 
                 {{-- Kategori --}}
-                <td class="px-6 py-6">
-
-                    <span class="inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
-
+                <td class="px-4 py-3">
+                    <span class="inline-flex px-2 py-1 rounded border bg-gray-50 text-gray-600 text-[10px] font-semibold tracking-wide">
                         {{ $item->category }}
-
                     </span>
-
                 </td>
 
                 {{-- Lokasi --}}
-                <td class="px-6 py-6 text-gray-700">
-
-                    {{ $item->location }}
-
+                <td class="px-4 py-3 text-gray-700 text-sm">
+                    <div class="truncate max-w-[150px]" title="{{ $item->location }}">{{ $item->location }}</div>
                 </td>
 
                 {{-- Tanggal --}}
-                <td class="px-6 py-6 text-gray-700">
-
+                <td class="px-4 py-3 text-gray-700 text-sm whitespace-nowrap">
                     {{ \Carbon\Carbon::parse($item->incident_date)->format('d M Y') }}
-
                 </td>
 
                 {{-- Pelapor --}}
-                <td class="px-6 py-6 text-gray-700">
-
+                <td class="px-4 py-3 text-gray-700 text-sm">
                     {{ $item->reporter_name }}
-
                 </td>
 
                 {{-- Status --}}
-                <td class="px-6 py-6 text-center">
-
-                    @if($item->status == 'ditemukan')
-
-                         <span class="inline-flex items-center whitespace-nowrap px-4 py-2 rounded-full bg-red-100 text-red-600 font-semibold text-sm">
-                            Ditemukan
-                        </span>
-
-                    @elseif($item->status == 'dikembalikan')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-                            Dikembalikan
-                        </span>
-
-                    @elseif($item->status == 'diklaim')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
-                            Diklaim
-                        </span>
-                    
-                    @elseif($item->status == 'selesai')
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
-                            Selesai
-                        </span>
-
-                    @else
-
-                        <span class="inline-flex px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
-                            {{ Str::headline($item->status) }}
-                        </span>
-
-                    @endif
-
+                <td class="px-4 py-3 text-center">
+                    <form action="{{ route('admin.found-items.status', $item->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <select name="status" x-model="status" @change="$el.form.submit()"
+                            class="px-2 py-1 rounded-lg border-gray-200 text-xs font-semibold focus:ring-primary focus:border-primary cursor-pointer outline-none shadow-sm"
+                            :class="{
+                                'bg-red-50 text-red-700': status === 'ditemukan',
+                                'bg-yellow-50 text-yellow-700': status === 'diklaim',
+                                'bg-blue-50 text-blue-700': status === 'dikembalikan',
+                                'bg-green-50 text-green-700': status === 'selesai'
+                            }">
+                            <option value="ditemukan">Ditemukan</option>
+                            <option value="diklaim">Diklaim</option>
+                            <option value="dikembalikan">Dikembalikan</option>
+                            <option value="selesai">Selesai</option>
+                        </select>
+                    </form>
                 </td>
 
                 {{-- Aksi --}}
-                <td class="px-6 py-6">
+                <td class="px-4 py-3">
 
-                    <div class="flex justify-center gap-3">
+                    <div class="flex justify-center gap-2">
 
                         <a
                             href="{{ route('admin.found-items.edit', $item) }}"
-                            class="w-10 h-10 rounded-xl bg-blue-50 hover:bg-blue-100 flex items-center justify-center">
+                            class="w-8 h-8 rounded bg-blue-50 hover:bg-blue-100 flex items-center justify-center">
 
                             <img
                                 src="{{ asset('images/icons/edit.svg') }}"
-                                class="w-5">
+                                class="w-4">
 
                         </a>
 
@@ -192,11 +155,11 @@
 
                             <button
                                 type="submit"
-                                class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-100 transition flex items-center justify-center">
+                                class="w-8 h-8 rounded bg-red-50 hover:bg-red-100 transition flex items-center justify-center">
 
                                 <img
                                     src="{{ asset('images/icons/delete.svg') }}"
-                                    class="w-5">
+                                    class="w-4">
 
                             </button>
 

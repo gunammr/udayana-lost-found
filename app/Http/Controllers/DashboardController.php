@@ -42,7 +42,7 @@ class DashboardController extends Controller
         foreach ($recentLostItems as $item) {
 
             $recentActivities->push([
-
+                'id' => $item->id,
                 'type' => 'lost',
                 'title' => $item->item_name,
                 'status' => $item->status,
@@ -56,7 +56,7 @@ class DashboardController extends Controller
         foreach ($recentFoundItems as $item) {
 
             $recentActivities->push([
-
+                'id' => $item->id,
                 'type' => 'found',
 
                 'title' => $item->item_name,
@@ -74,7 +74,7 @@ class DashboardController extends Controller
         foreach ($recentClaims as $claim) {
 
             $recentActivities->push([
-
+                'id' => $claim->id,
                 'type' => 'claim',
 
                 'title' => optional($claim->foundItem)->item_name ?? 'Barang',

@@ -46,7 +46,8 @@
                 @forelse ($items as $item)
                     @php
                         $foundReport = $item->latestFoundReport ?? null;
-                        $status  = $foundReport ? 'ditemukan' : ($item->status ?? 'hilang');
+                        $dbStatus = $item->status ?? 'hilang';
+                        $status  = ($foundReport && $dbStatus !== 'selesai') ? 'ditemukan' : $dbStatus;
                         [$statusStyle, $statusLabel] = match($status) {
                             'hilang'    => ['bg-red-100 text-red-700',    'Hilang'],
                             'dicari'    => ['bg-amber-100 text-amber-700', 'Dicari'],
@@ -194,6 +195,13 @@
                                                 <p><span class="font-bold text-gray-700">Kontak:</span> {{ $foundReport->phone }}</p>
                                                 <p><span class="font-bold text-gray-700">Tanggal:</span> {{ \Carbon\Carbon::parse($foundReport->incident_date)->translatedFormat('d M Y') }}</p>
                                             </div>
+                                            @if (!empty($foundReport->photo_path))
+                                                <div class="mt-4">
+                                                    <p class="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-2">Foto Barang</p>
+                                                    <img src="{{ Str::startsWith($foundReport->photo_path, ['http://', 'https://']) ? $foundReport->photo_path : asset('storage/' . $foundReport->photo_path) }}"
+                                                         class="w-full max-h-48 rounded-xl object-contain bg-blue-100/50 border border-blue-200">
+                                                </div>
+                                            @endif
                                         </div>
                                     @endif
 
@@ -245,17 +253,17 @@
                                     </div>
 
                                     {{-- Tombol Telah Ditemukan --}}
-                                    @if (!in_array($status, ['ditemukan', 'selesai']))
+                                    @if ($status !== 'selesai')
                                         <form method="POST" action="{{ route('my.lost-items.mark-found', $item->id) }}" class="mt-6">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit"
-                                                    onclick="return confirm('Konfirmasi: Apakah barang ini benar-benar sudah ditemukan?')"
-                                                    class="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/25 transition hover:bg-emerald-600 active:scale-95">
+                                                    onclick="return confirm('{{ $status === 'ditemukan' ? 'Konfirmasi: Apakah Anda sudah menerima barang Anda?' : 'Konfirmasi: Apakah barang ini benar-benar sudah ditemukan?' }}')"
+                                                    class="w-full flex items-center justify-center gap-2 rounded-xl {{ $status === 'ditemukan' ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/25' : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/25' }} px-5 py-3 text-sm font-bold text-white shadow-md transition active:scale-95">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                                 </svg>
-                                                Telah Ditemukan
+                                                {{ $status === 'ditemukan' ? 'Barang Diterima' : 'Telah Ditemukan' }}
                                             </button>
                                         </form>
                                     @endif

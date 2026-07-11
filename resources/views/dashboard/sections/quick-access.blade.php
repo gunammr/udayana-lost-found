@@ -52,96 +52,108 @@
                 <div class="mt-8 space-y-8">
 
                     @forelse($recentActivities as $activity)
+                        @php
+                            $activityRoute = '#';
+                            if ($activity['type'] == 'lost') {
+                                $activityRoute = route('lost-items.show', $activity['id']);
+                            } elseif ($activity['type'] == 'found') {
+                                $activityRoute = route('found-items.show', $activity['id']);
+                            } elseif ($activity['type'] == 'claim') {
+                                $activityRoute = route('claims.index');
+                            }
+                        @endphp
 
-                        <div class="flex gap-5">
+                        <a href="{{ $activityRoute }}" class="block group">
+                            <div class="flex gap-5 p-3 -mx-3 rounded-2xl transition duration-200 group-hover:bg-blue-50">
 
-                            {{-- FOTO / ICON --}}
-                            <div class="h-16 w-16 flex-none overflow-hidden rounded-xl bg-blue-100">
+                                {{-- FOTO / ICON --}}
+                                <div class="h-16 w-16 flex-none overflow-hidden rounded-xl bg-blue-100">
 
-                                @if ($activity['photo'])
-                                    <img src="{{ asset('storage/' . $activity['photo']) }}"
-                                        class="h-full w-full object-cover">
-                                @else
-                                    <div class="flex h-full w-full items-center justify-center">
+                                    @if ($activity['photo'])
+                                        <img src="{{ asset('storage/' . $activity['photo']) }}"
+                                            class="h-full w-full object-cover">
+                                    @else
+                                        <div class="flex h-full w-full items-center justify-center">
 
-                                        @if ($activity['type'] == 'lost')
-                                            <img src="{{ asset('images/Pencarian.png') }}" class="w-7">
-                                        @elseif($activity['type'] == 'found')
-                                            <img src="{{ asset('images/Aman.png') }}" class="w-7">
-                                        @else
-                                            <img src="{{ asset('images/Aman.png') }}" class="w-7">
-                                        @endif
+                                            @if ($activity['type'] == 'lost')
+                                                <img src="{{ asset('images/Pencarian.png') }}" class="w-7">
+                                            @elseif($activity['type'] == 'found')
+                                                <img src="{{ asset('images/Aman.png') }}" class="w-7">
+                                            @else
+                                                <img src="{{ asset('images/Aman.png') }}" class="w-7">
+                                            @endif
+
+                                        </div>
+                                    @endif
+
+                                </div>
+
+                                {{-- KONTEN --}}
+                                <div class="flex-1 min-w-0">
+
+                                    <div class="flex justify-between gap-4">
+
+                                        <div>
+
+                                            <h3 class="font-semibold truncate group-hover:text-primary transition">
+
+                                                {{ $activity['title'] }}
+
+                                            </h3>
+
+                                            <p class="text-body">
+
+                                                @switch($activity['type'])
+                                                    @case('lost')
+                                                        Laporan Kehilangan
+                                                    @break
+
+                                                    @case('found')
+                                                        Barang Ditemukan
+                                                    @break
+
+                                                    @case('claim')
+                                                        Pengajuan Klaim
+                                                    @break
+                                                @endswitch
+
+                                            </p>
+
+                                        </div>
+
+                                        <span class="text-sm text-gray-400 whitespace-nowrap">
+
+                                            {{ $activity['created_at']->diffForHumans() }}
+
+                                        </span>
 
                                     </div>
-                                @endif
 
-                            </div>
+                                    {{-- Badge Status --}}
+                                    @php
 
-                            {{-- KONTEN --}}
-                            <div class="flex-1 min-w-0">
+                                        $badge = match ($activity['type']) {
+                                            'lost' => 'bg-red-100 text-red-600',
 
-                                <div class="flex justify-between gap-4">
+                                            'found' => 'bg-yellow-100 text-yellow-700',
 
-                                    <div>
+                                            'claim' => 'bg-blue-100 text-primary',
 
-                                        <h3 class="font-semibold truncate">
+                                            default => 'bg-gray-100 text-gray-700',
+                                        };
 
-                                            {{ $activity['title'] }}
+                                    @endphp
 
-                                        </h3>
+                                    <span class="inline-flex mt-3 px-4 py-1 rounded-full text-sm {{ $badge }}">
 
-                                        <p class="text-body">
-
-                                            @switch($activity['type'])
-                                                @case('lost')
-                                                    Laporan Kehilangan
-                                                @break
-
-                                                @case('found')
-                                                    Barang Ditemukan
-                                                @break
-
-                                                @case('claim')
-                                                    Pengajuan Klaim
-                                                @break
-                                            @endswitch
-
-                                        </p>
-
-                                    </div>
-
-                                    <span class="text-sm text-gray-400 whitespace-nowrap">
-
-                                        {{ $activity['created_at']->diffForHumans() }}
+                                        {{ Str::headline($activity['status']) }}
 
                                     </span>
 
                                 </div>
 
-                                {{-- Badge Status --}}
-                                @php
-
-                                    $badge = match ($activity['type']) {
-                                        'lost' => 'bg-red-100 text-red-600',
-
-                                        'found' => 'bg-yellow-100 text-yellow-700',
-
-                                        'claim' => 'bg-blue-100 text-primary',
-
-                                        default => 'bg-gray-100 text-gray-700',
-                                    };
-
-                                @endphp
-
-                                <span class="inline-flex mt-3 px-4 py-1 rounded-full text-sm {{ $badge }}">
-
-                                    {{ Str::headline($activity['status']) }}
-
-                                </span>
-
                             </div>
-
-                        </div>
+                        </a>
 
                         @empty
 

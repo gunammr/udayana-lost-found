@@ -159,8 +159,65 @@ class LostItemController extends Controller
             ]);
         }
 
+        // Tandai semua laporan ditemukan yang terkait menjadi selesai
+        foreach ($lostItem->foundReports as $foundReport) {
+            if ($foundReport->status !== 'selesai') {
+                $foundReport->update([
+                    'status' => 'selesai',
+                    'selesai_at' => now(),
+                ]);
+            }
+        }
+
         return redirect()
             ->route('claims.laporan')
-            ->with('success', 'Status barang hilang diperbarui: Selesai – barang telah ditemukan!');
+            ->with('success', 'Status barang hilang diperbarui: Selesai – barang telah diterima/ditemukan!');
+    }
+
+    public function adminUpdateStatus(Request $request, LostItem $lostItem)
+    {
+        $request->validate([
+            'status' => 'required|in:hilang,dicari,selesai',
+        ]);
+
+        $lostItem->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect()->back()->with('success', 'Status barang hilang berhasil diperbarui.');
+    }
+
+    public function adminMarkFound(Request $request, LostItem $lostItem)
+    {
+        $request->validate([
+            'item_name'     => 'required|string|max:255',
+            'category'      => 'required|string|max:100',
+            'location'      => 'required|string|max:255',
+            'incident_date' => 'required|date',
+            'description'   => 'required|string|max:1000',
+            'reporter_name' => 'required|string|max:255',
+            'phone'         => 'required|string|max:20',
+            'photo'         => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->except(['photo', '_token', '_method']);
+        $data['user_id'] = Auth::id();
+        $data['status'] = 'ditemukan';
+        $data['lost_item_id'] = $lostItem->id;
+
+        if ($request->hasFile('photo')) {
+            $data['photo_path'] = $request->file('photo')->store('found_items', 'public');
+        }
+
+        \App\Models\FoundItem::create($data);
+
+        // Update lost item status as well, but wait, do we change it to ditemukan?
+        // Wait, standard flow leaves it as 'hilang' but gives it a found report, or 'dicari'.
+        // But since admin explicitly chose 'ditemukan', we update the status.
+        $lostItem->update([
+            'status' => 'ditemukan',
+        ]);
+
+        return redirect()->route('admin.lost-items.index')->with('success', 'Barang hilang berhasil ditandai sebagai ditemukan dan laporan temuan telah dibuat.');
     }
 }

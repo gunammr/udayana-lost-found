@@ -27,22 +27,27 @@
         @method('PATCH')
 
         {{-- Foto Profil --}}
-        <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
+        <div x-data="avatarPreview()" class="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
             <h3 class="mb-4 text-sm font-bold text-gray-800">Foto Profil</h3>
             <div class="flex items-center gap-5">
-                @if ($user->avatar_path)
-                    <img src="{{ asset('storage/' . $user->avatar_path) }}" class="object-cover w-16 h-16 border rounded-full">
-                @else
-                    <div class="flex items-center justify-center w-16 h-16 text-xl font-bold text-blue-700 bg-blue-100 border rounded-full">
-                        {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
-                    </div>
-                @endif
+                <template x-if="imageUrl">
+                    <img :src="imageUrl" class="object-cover w-16 h-16 border rounded-full">
+                </template>
+                <template x-if="!imageUrl">
+                    @if ($user->avatar_path)
+                        <img src="{{ asset('storage/' . $user->avatar_path) }}" class="object-cover w-16 h-16 border rounded-full">
+                    @else
+                        <div class="flex items-center justify-center w-16 h-16 text-xl font-bold text-blue-700 bg-blue-100 border rounded-full">
+                            {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
+                        </div>
+                    @endif
+                </template>
                 <div>
                     <p class="text-sm font-semibold text-gray-700">Ubah foto profil</p>
                     <p class="mb-2 text-xs text-gray-400">Format JPG, PNG. Ukuran maksimal 2MB.</p>
                     <label class="inline-block px-4 py-2 text-xs font-bold transition rounded-lg cursor-pointer bg-blue-50 text-primary hover:bg-blue-100">
                         Pilih Foto
-                        <input type="file" name="avatar" accept="image/*" class="hidden">
+                        <input type="file" name="avatar" accept="image/*" class="hidden" @change="fileChosen">
                     </label>
                 </div>
             </div>
@@ -50,6 +55,24 @@
                 <p class="mt-2 text-xs text-red-500">{{ $message }}</p>
             @enderror
         </div>
+
+        <script>
+            function avatarPreview() {
+                return {
+                    imageUrl: '',
+                    fileChosen(event) {
+                        this.fileToDataUrl(event, src => this.imageUrl = src)
+                    },
+                    fileToDataUrl(event, callback) {
+                        if (! event.target.files.length) return
+                        let file = event.target.files[0],
+                            reader = new FileReader()
+                        reader.readAsDataURL(file)
+                        reader.onload = e => callback(e.target.result)
+                    }
+                }
+            }
+        </script>
 
         {{-- Data Akun --}}
         <div class="p-6 space-y-5 bg-white border border-gray-100 shadow-sm rounded-2xl">
